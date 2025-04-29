@@ -1,0 +1,4000 @@
+openapi: 3.1.0
+info:
+  title: oni
+  version: 1.5.1
+paths:
+  /v1/auth/login:
+    post:
+      tags:
+      - Authorization
+      description: Login with username and password
+      operationId: login
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthorizationSC'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+      security:
+      - httpAuth: []
+  /v1/auth:
+    post:
+      tags:
+      - Authorization
+      description: 'Exchange an API key for a JWT. Header format is `Authorization:
+        APIKEY <key>`'
+      operationId: authenticate
+      parameters:
+      - name: Authorization
+        in: header
+        description: 'Header format is `Authorization: APIKEY <key>`'
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthorizationSC'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+  /v1/concept/query/root:
+    get:
+      tags:
+      - Concept
+      description: Find the root concept
+      operationId: findRoot
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConceptMetadata'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+  /v1/concept/parent/{name}:
+    get:
+      tags:
+      - Concept
+      description: Find the parent of a concept
+      operationId: findParent
+      parameters:
+      - name: name
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConceptMetadata'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+  /v1/concept/children/{name}:
+    get:
+      tags:
+      - Concept
+      description: Find the children of a concept
+      operationId: findChildren
+      parameters:
+      - name: name
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ConceptMetadata'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+  /v1/concept/find/{name}:
+    get:
+      tags:
+      - Concept
+      description: Find concepts by name containing
+      operationId: findByNameContaining
+      parameters:
+      - name: name
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ConceptMetadata'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+  /v1/concept/ranks:
+    get:
+      tags:
+      - Concept
+      description: List valid ranks
+      operationId: listValidRanks
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Rank'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+  /v1/concept/{name}:
+    get:
+      tags:
+      - Concept
+      description: Find a concept by name
+      operationId: findByName
+      parameters:
+      - name: name
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConceptMetadata'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+    put:
+      tags:
+      - Concept
+      description: Update a concept. To remove a rank name or level, set it to an
+        empty string. Only administrators can remove rank names and levels.
+      operationId: updateConcept
+      parameters:
+      - name: name
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConceptUpdate'
+        required: true
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConceptMetadata'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+      security:
+      - {}
+      - httpAuth1: []
+    delete:
+      tags:
+      - Concept
+      description: Delete a concept
+      operationId: deleteConcept
+      parameters:
+      - name: name
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+      security:
+      - {}
+      - httpAuth1: []
+  /v1/concept:
+    get:
+      tags:
+      - Concept
+      description: Get all concept names
+      operationId: allConcepts
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+    post:
+      tags:
+      - Concept
+      description: Create a new concept
+      operationId: createConcept
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConceptCreate'
+        required: true
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConceptMetadata'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+      security:
+      - {}
+      - httpAuth1: []
+  /v1/names/{name}:
+    get:
+      tags:
+      - ConceptName
+      description: Find a concept name
+      operationId: findConceptName
+      parameters:
+      - name: name
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RawConcept'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+    put:
+      tags:
+      - ConceptName
+      description: Update a concept name. To remove the author, set it to an empty
+        string
+      operationId: updateConceptName
+      parameters:
+      - name: name
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConceptNameUpdate'
+        required: true
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RawConcept'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+      security:
+      - {}
+      - httpAuth1: []
+    delete:
+      tags:
+      - ConceptName
+      description: Delete a concept name
+      operationId: deleteConceptName
+      parameters:
+      - name: name
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RawConcept'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+      security:
+      - {}
+      - httpAuth1: []
+  /v1/names:
+    get:
+      tags:
+      - ConceptName
+      description: Get all concept names
+      operationId: allConceptNames
+      parameters:
+      - name: offset
+        in: query
+        description: Offset for paging
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: limit
+        in: query
+        description: Limit for paging
+        required: false
+        schema:
+          type: integer
+          format: int32
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Page_Seq_String'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+    post:
+      tags:
+      - ConceptName
+      description: Add a new concept name
+      operationId: addConceptName
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConceptNameCreate'
+        required: true
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RawConcept'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+      security:
+      - {}
+      - httpAuth1: []
+  /v1/health:
+    get:
+      tags:
+      - Health
+      description: Health check
+      operationId: health
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthStatus'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+  /v1/history/concept/{p1}:
+    get:
+      tags:
+      - History
+      description: Find a history record by its concept name
+      operationId: findHistoryByConceptName
+      parameters:
+      - name: p1
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ExtendedHistory'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+  /v1/history/approve/{p1}:
+    put:
+      tags:
+      - History
+      description: Approve a history record
+      operationId: approveHistory
+      parameters:
+      - name: p1
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExtendedHistory'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+      security:
+      - {}
+      - httpAuth1: []
+  /v1/history/reject/{p1}:
+    put:
+      tags:
+      - History
+      description: Reject a history record
+      operationId: rejectHistory
+      parameters:
+      - name: p1
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExtendedHistory'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+      security:
+      - {}
+      - httpAuth1: []
+  /v1/history/approved/count:
+    get:
+      tags:
+      - History
+      description: Get the count of all approved change requests
+      operationId: approvedCount
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Count'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+  /v1/history/approved:
+    get:
+      tags:
+      - History
+      description: Get all approved change requests
+      operationId: approved
+      parameters:
+      - name: offset
+        in: query
+        description: Offset for paging
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: limit
+        in: query
+        description: Limit for paging
+        required: false
+        schema:
+          type: integer
+          format: int32
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Page_Seq_ExtendedHistory'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+  /v1/history/pending/count:
+    get:
+      tags:
+      - History
+      description: Get the count of all pending change requests
+      operationId: pendingCount
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Count'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+  /v1/history/pending:
+    get:
+      tags:
+      - History
+      description: Get all pending change requests
+      operationId: pending
+      parameters:
+      - name: offset
+        in: query
+        description: Offset for paging
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: limit
+        in: query
+        description: Limit for paging
+        required: false
+        schema:
+          type: integer
+          format: int32
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Page_Seq_ExtendedHistory'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+  /v1/history/{p1}:
+    get:
+      tags:
+      - History
+      description: Find a history record by its id
+      operationId: findHistoryById
+      parameters:
+      - name: p1
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExtendedHistory'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+    delete:
+      tags:
+      - History
+      description: Delete a history record
+      operationId: deleteHistory
+      parameters:
+      - name: p1
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+      security:
+      - {}
+      - httpAuth1: []
+  /v1/links/query/linkrealizations/{linkName}:
+    get:
+      tags:
+      - Links
+      description: Get all link realizations for a link name
+      operationId: linkRealizations
+      parameters:
+      - name: linkName
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ExtendedLink'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+  /v1/links/{name}/using/{linkName}:
+    get:
+      tags:
+      - Links
+      description: Get all link templates applicable to a concept and link name
+      operationId: linksForConceptAndLinkName
+      parameters:
+      - name: name
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: linkName
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Link'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+  /v1/links/{name}:
+    get:
+      tags:
+      - Links
+      description: Get all link templates applicable to a concept
+      operationId: linksForConcept
+      parameters:
+      - name: name
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Link'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+  /v1/links:
+    get:
+      tags:
+      - Links
+      description: Get all link templates
+      operationId: links
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Link'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+  /v1/linkrealizations/concept/{conceptName}:
+    get:
+      tags:
+      - LinkRealizations
+      description: Find all link realizations by concept name
+      operationId: findLinkRealizationsByConceptName
+      parameters:
+      - name: conceptName
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ExtendedLink'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+  /v1/linkrealizations/prototype:
+    post:
+      tags:
+      - LinkRealizations
+      description: Find all link realizations by prototype
+      operationId: findLinkRealizationByPrototype
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Link'
+        required: true
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ExtendedLink'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+  /v1/linkrealizations:
+    post:
+      tags:
+      - LinkRealizations
+      description: Create a new link realization
+      operationId: createLinkRealization
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LinkCreate'
+        required: true
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExtendedLink'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+      security:
+      - {}
+      - httpAuth1: []
+  /v1/linkrealizations/{id}:
+    get:
+      tags:
+      - LinkRealizations
+      description: Find a link realizations by its id
+      operationId: findLinkRealizationeById
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExtendedLink'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+    put:
+      tags:
+      - LinkRealizations
+      description: Update a link realization
+      operationId: updateLinkRealization
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LinkUpdate'
+        required: true
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExtendedLink'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+      security:
+      - {}
+      - httpAuth1: []
+    delete:
+      tags:
+      - LinkRealizations
+      description: Delete a link realization
+      operationId: deleteLinkRealization
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+      security:
+      - {}
+      - httpAuth1: []
+  /v1/linktemplates/toconcept/rename:
+    put:
+      tags:
+      - LinkTemplates
+      description: Bulk rename all linkTemplate toConcepts
+      operationId: renameToConcept
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LinkRenameToConceptRequest'
+        required: true
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LinkRenameToConceptResponse'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+      security:
+      - {}
+      - httpAuth1: []
+  /v1/linktemplates/concept/{conceptName}:
+    get:
+      tags:
+      - LinkTemplates
+      description: Find all link templates by concept name
+      operationId: findLinkTemplateByConceptName
+      parameters:
+      - name: conceptName
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ExtendedLink'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+  /v1/linktemplates/prototype:
+    post:
+      tags:
+      - LinkTemplates
+      description: Find all link templates by prototype
+      operationId: findLinkTemplateByPrototype
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Link'
+        required: true
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ExtendedLink'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+  /v1/linktemplates/toconcept/count/{toConcept}:
+    get:
+      tags:
+      - LinkTemplates
+      description: Count all link templates by toConcept
+      operationId: countLinkTemplatesByToConcept
+      parameters:
+      - name: toConcept
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: integer
+                format: int64
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+  /v1/linktemplates/toconcept/{toConcept}:
+    get:
+      tags:
+      - LinkTemplates
+      description: Find all link templates by toConcept
+      operationId: findLinkTemplatesByToConcept
+      parameters:
+      - name: toConcept
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ExtendedLink'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+  /v1/linktemplates:
+    post:
+      tags:
+      - LinkTemplates
+      description: Create a new link template
+      operationId: createLinkTemplate
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LinkCreate'
+        required: true
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExtendedLink'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+      security:
+      - {}
+      - httpAuth1: []
+  /v1/linktemplates/{id}:
+    get:
+      tags:
+      - LinkTemplates
+      description: Find a link template by its id
+      operationId: findLinkTemplateById
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExtendedLink'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+    put:
+      tags:
+      - LinkTemplates
+      description: Update a link template
+      operationId: updateLinkTemplate
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LinkUpdate'
+        required: true
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExtendedLink'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+      security:
+      - {}
+      - httpAuth1: []
+    delete:
+      tags:
+      - LinkTemplates
+      description: Delete a link template
+      operationId: deleteLinkTemplate
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+      security:
+      - {}
+      - httpAuth1: []
+  /v1/media/{id}:
+    get:
+      tags:
+      - Media
+      description: Find a media record by ID
+      operationId: findMediaById
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Media'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+    put:
+      tags:
+      - Media
+      description: Update a media record
+      operationId: updateMedia
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MediaUpdate'
+        required: true
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Media'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+      security:
+      - {}
+      - httpAuth1: []
+    delete:
+      tags:
+      - Media
+      description: Delete a media record
+      operationId: deleteMedia
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+      security:
+      - {}
+      - httpAuth1: []
+  /v1/media/search/concept/{name}:
+    get:
+      tags:
+      - Media
+      description: Get all media for a concept
+      operationId: mediaForConcept
+      parameters:
+      - name: name
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Media'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+  /v1/media:
+    post:
+      tags:
+      - Media
+      description: Create a new media record
+      operationId: createMedia
+      requestBody:
+        description: The media record to create. mediaType defaults to 'IMAGE', but
+          can also be set to 'VIDEO'
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MediaCreate'
+        required: true
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Media'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+      security:
+      - {}
+      - httpAuth1: []
+  /v1/phylogeny/up/{name}:
+    get:
+      tags:
+      - Phylogeny
+      description: Find the branch from a given concept up to the root
+      operationId: phylogenyUp
+      parameters:
+      - name: name
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SerdeConcept'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+  /v1/phylogeny/down/{name}:
+    get:
+      tags:
+      - Phylogeny
+      description: Find the branch from the root down to a given concept
+      operationId: getV1PhylogenyDownName
+      parameters:
+      - name: name
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SerdeConcept'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+  /v1/phylogeny/siblings/{name}:
+    get:
+      tags:
+      - Phylogeny
+      operationId: getV1PhylogenySiblingsName
+      parameters:
+      - name: name
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SerdeConcept'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+  /v1/phylogeny/basic/{name}:
+    get:
+      tags:
+      - Phylogeny
+      operationId: getV1PhylogenyBasicName
+      parameters:
+      - name: name
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SerdeConcept'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+  /v1/phylogeny/taxa/{name}:
+    get:
+      tags:
+      - Phylogeny
+      operationId: getV1PhylogenyTaxaName
+      parameters:
+      - name: name
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SerdeConcept'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+  /v1/prefs/startswith:
+    get:
+      tags:
+      - Preferences
+      description: Find all preferences with a given prefix
+      operationId: findByPrefix
+      parameters:
+      - name: prefix
+        in: query
+        description: Prefix of full node name
+        required: true
+        schema:
+          type: string
+        example: prefix
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PrefNode'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+  /v1/prefs:
+    get:
+      tags:
+      - Preferences
+      description: Get all prefNode names matching a node name and key
+      operationId: byNodeNameAndKey
+      parameters:
+      - name: name
+        in: query
+        description: Name of the prefNode
+        required: true
+        schema:
+          type: string
+        example: name
+      - name: key
+        in: query
+        description: Key of the prefNode
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PrefNode'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+    put:
+      tags:
+      - Preferences
+      description: Update a prefNode. Can be called using form body or json body.
+        If name and key are not in the request body, they must be in the query parameters.
+      operationId: updatePrefNode
+      parameters:
+      - name: name
+        in: query
+        description: Name of the prefNode. If not already in the request body
+        required: false
+        schema:
+          type: string
+      - name: key
+        in: query
+        description: Key of the prefNode. If not already in the request body
+        required: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PrefNodeUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PrefNodeUpdate'
+        required: true
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PrefNode'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+      security:
+      - {}
+      - httpAuth1: []
+    post:
+      tags:
+      - Preferences
+      description: Create a new prefNode
+      operationId: createPrefNode
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PrefNode'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PrefNode'
+        required: true
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PrefNode'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+      security:
+      - {}
+      - httpAuth1: []
+    delete:
+      tags:
+      - Preferences
+      description: Delete a prefNode
+      operationId: deletePrefNode
+      parameters:
+      - name: name
+        in: query
+        description: Name of the prefNode
+        required: true
+        schema:
+          type: string
+        example: name
+      - name: key
+        in: query
+        description: Key of the prefNode
+        required: true
+        schema:
+          type: string
+        example: key
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+      security:
+      - {}
+      - httpAuth1: []
+  /v1/raw/concept/{name}:
+    get:
+      tags:
+      - Raw
+      description: Find a concept by name. Return raw (i.e. database format) concept
+      operationId: findRawConceptByName
+      parameters:
+      - name: name
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RawConcept'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+  /v1/raw/names/{name}:
+    get:
+      tags:
+      - Raw
+      description: Find all concept names for a concept
+      operationId: findRawConceptNamesByName
+      parameters:
+      - name: name
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RawConceptName'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+  /v1/reference/add/{id}/to/{concept}:
+    put:
+      tags:
+      - Reference
+      description: Add a reference to a concept
+      operationId: addReferenceToConcept
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      - name: concept
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Reference'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+      security:
+      - {}
+      - httpAuth1: []
+  /v1/reference/remove/{id}/from/{concept}:
+    put:
+      tags:
+      - Reference
+      description: Remove a reference from a concept
+      operationId: removeReferenceFromConcept
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      - name: concept
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Reference'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+      security:
+      - {}
+      - httpAuth1: []
+  /v1/reference/query/citation:
+    post:
+      tags:
+      - Reference
+      description: Find references by citation glob
+      operationId: findReferencesByCitationGlob
+      parameters:
+      - name: offset
+        in: query
+        description: Offset for paging
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: limit
+        in: query
+        description: Limit for paging
+        required: false
+        schema:
+          type: integer
+          format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReferenceQuery'
+        required: true
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Reference'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+  /v1/reference/query/doi:
+    post:
+      tags:
+      - Reference
+      description: Find a reference by DOI
+      operationId: findReferenceByDoi
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReferenceQuery'
+        required: true
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Reference'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+  /v1/reference/{id}:
+    get:
+      tags:
+      - Reference
+      description: Find a reference by its ID
+      operationId: findReferenceById
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Reference'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+    put:
+      tags:
+      - Reference
+      description: Update a reference
+      operationId: updateReference
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReferenceUpdate'
+        required: true
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Reference'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+      security:
+      - {}
+      - httpAuth1: []
+    delete:
+      tags:
+      - Reference
+      description: Delete a reference
+      operationId: deleteReference
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+      security:
+      - {}
+      - httpAuth1: []
+  /v1/reference:
+    get:
+      tags:
+      - Reference
+      description: Find all references
+      operationId: findAllReferences
+      parameters:
+      - name: offset
+        in: query
+        description: Offset for paging
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: limit
+        in: query
+        description: Limit for paging
+        required: false
+        schema:
+          type: integer
+          format: int32
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Reference'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+    post:
+      tags:
+      - Reference
+      description: Create a new reference
+      operationId: createReference
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Reference'
+        required: true
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Reference'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+      security:
+      - {}
+      - httpAuth1: []
+  /v1/users/role/{role}:
+    get:
+      tags:
+      - User Accounts
+      description: Find all user accounts by role
+      operationId: userAccountsByRole
+      parameters:
+      - name: role
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserAccount'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+  /v1/users/{name}:
+    get:
+      tags:
+      - User Accounts
+      description: Find a user account by username
+      operationId: userAccountByName
+      parameters:
+      - name: name
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserAccount'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+    put:
+      tags:
+      - User Accounts
+      description: Update a user account
+      operationId: updateUserAccount
+      parameters:
+      - name: name
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserAccountUpdate'
+        required: true
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserAccount'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+      security:
+      - {}
+      - httpAuth1: []
+    delete:
+      tags:
+      - User Accounts
+      description: Delete a user account by username
+      operationId: deleteUserAccount
+      parameters:
+      - name: name
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+      security:
+      - {}
+      - httpAuth1: []
+  /v1/users:
+    get:
+      tags:
+      - User Accounts
+      description: Get all user accounts
+      operationId: allUserAccounts
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserAccount'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+    post:
+      tags:
+      - User Accounts
+      description: Create a new user account
+      operationId: createUserAccount
+      requestBody:
+        description: The user account to create. Accepts camelCase or snake_case.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserAccountCreate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserAccountCreate'
+        required: true
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserAccount'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+      security:
+      - {}
+      - httpAuth1: []
+components:
+  schemas:
+    AuthorizationSC:
+      title: AuthorizationSC
+      type: object
+      required:
+      - token_type
+      - access_token
+      properties:
+        token_type:
+          type: string
+        access_token:
+          type: string
+    BadRequest:
+      title: BadRequest
+      type: object
+      required:
+      - message
+      - responseCode
+      properties:
+        message:
+          type: string
+        responseCode:
+          type: integer
+          format: int32
+    ConceptCreate:
+      title: ConceptCreate
+      type: object
+      required:
+      - name
+      properties:
+        name:
+          type: string
+        parentName:
+          type: string
+        rankLevel:
+          type: string
+        rankName:
+          type: string
+        aphiaId:
+          type: integer
+          format: int64
+        author:
+          type: string
+    ConceptMetadata:
+      title: ConceptMetadata
+      type: object
+      required:
+      - name
+      properties:
+        name:
+          type: string
+        alternateNames:
+          type: array
+          uniqueItems: true
+          items:
+            type: string
+        media:
+          type: array
+          uniqueItems: true
+          items:
+            $ref: '#/components/schemas/Media'
+        linkRealizations:
+          type: array
+          uniqueItems: true
+          items:
+            $ref: '#/components/schemas/Link'
+        rank:
+          type: string
+        rankName:
+          type: string
+        rankLevel:
+          type: string
+        author:
+          type: string
+        aphiaId:
+          type: integer
+          format: int64
+        references:
+          type: array
+          uniqueItems: true
+          items:
+            $ref: '#/components/schemas/Reference'
+        id:
+          type: integer
+          format: int64
+    ConceptNameCreate:
+      title: ConceptNameCreate
+      type: object
+      required:
+      - name
+      - newName
+      - nameType
+      properties:
+        name:
+          type: string
+        newName:
+          type: string
+        nameType:
+          type: string
+        author:
+          type: string
+    ConceptNameUpdate:
+      title: ConceptNameUpdate
+      type: object
+      properties:
+        newName:
+          type: string
+        nameType:
+          type: string
+        author:
+          type: string
+    ConceptUpdate:
+      title: ConceptUpdate
+      type: object
+      properties:
+        parentName:
+          type: string
+        rankLevel:
+          type: string
+        rankName:
+          type: string
+        aphiaId:
+          type: integer
+          format: int64
+    Count:
+      title: Count
+      type: object
+      required:
+      - count
+      properties:
+        count:
+          type: integer
+          format: int64
+    ExtendedHistory:
+      title: ExtendedHistory
+      type: object
+      required:
+      - concept
+      - creationTimestamp
+      - creatorName
+      - action
+      - field
+      - approved
+      properties:
+        concept:
+          type: string
+        creationTimestamp:
+          type: string
+        creatorName:
+          type: string
+        action:
+          type: string
+        field:
+          type: string
+        oldValue:
+          type: string
+        newValue:
+          type: string
+        approved:
+          type: boolean
+        processedTimestamp:
+          type: string
+        processorName:
+          type: string
+        id:
+          type: integer
+          format: int64
+    ExtendedLink:
+      title: ExtendedLink
+      type: object
+      required:
+      - concept
+      - linkName
+      - toConcept
+      - linkValue
+      properties:
+        concept:
+          type: string
+        linkName:
+          type: string
+        toConcept:
+          type: string
+        linkValue:
+          type: string
+        id:
+          type: integer
+          format: int64
+    HealthStatus:
+      title: HealthStatus
+      type: object
+      required:
+      - jdkVersion
+      - availableProcessors
+      - freeMemory
+      - maxMemory
+      - totalMemory
+      - application
+      - version
+      - description
+      properties:
+        jdkVersion:
+          type: string
+        availableProcessors:
+          type: integer
+          format: int32
+        freeMemory:
+          type: integer
+          format: int64
+        maxMemory:
+          type: integer
+          format: int64
+        totalMemory:
+          type: integer
+          format: int64
+        application:
+          type: string
+        version:
+          type: string
+        description:
+          type: string
+    Link:
+      title: Link
+      type: object
+      required:
+      - linkName
+      - toConcept
+      - linkValue
+      properties:
+        linkName:
+          type: string
+        toConcept:
+          type: string
+        linkValue:
+          type: string
+        id:
+          type: integer
+          format: int64
+    LinkCreate:
+      title: LinkCreate
+      type: object
+      required:
+      - concept
+      - linkName
+      - toConcept
+      - linkValue
+      properties:
+        concept:
+          type: string
+        linkName:
+          type: string
+        toConcept:
+          type: string
+        linkValue:
+          type: string
+    LinkRenameToConceptRequest:
+      title: LinkRenameToConceptRequest
+      type: object
+      required:
+      - old
+      - new
+      properties:
+        old:
+          type: string
+        new:
+          type: string
+    LinkRenameToConceptResponse:
+      title: LinkRenameToConceptResponse
+      type: object
+      required:
+      - oldConcept
+      - newConcept
+      - count
+      properties:
+        oldConcept:
+          type: string
+        newConcept:
+          type: string
+        count:
+          type: integer
+          format: int32
+    LinkUpdate:
+      title: LinkUpdate
+      type: object
+      properties:
+        linkName:
+          type: string
+        toConcept:
+          type: string
+        linkValue:
+          type: string
+    Media:
+      title: Media
+      type: object
+      required:
+      - url
+      - mimeType
+      - isPrimary
+      properties:
+        url:
+          type: string
+        caption:
+          type: string
+        credit:
+          type: string
+        mimeType:
+          type: string
+        isPrimary:
+          type: boolean
+        conceptName:
+          type: string
+        id:
+          type: integer
+          format: int64
+    MediaCreate:
+      title: MediaCreate
+      type: object
+      required:
+      - conceptName
+      - url
+      properties:
+        conceptName:
+          type: string
+        url:
+          type: string
+        caption:
+          type: string
+        credit:
+          type: string
+        mediaType:
+          type: string
+        isPrimary:
+          type: boolean
+    MediaUpdate:
+      title: MediaUpdate
+      type: object
+      properties:
+        url:
+          type: string
+        caption:
+          type: string
+        credit:
+          type: string
+        mediaType:
+          type: string
+        isPrimary:
+          type: boolean
+    NotFound:
+      title: NotFound
+      type: object
+      required:
+      - message
+      - responseCode
+      properties:
+        message:
+          type: string
+        responseCode:
+          type: integer
+          format: int32
+    Page_Seq_ExtendedHistory:
+      title: Page_Seq_ExtendedHistory
+      type: object
+      required:
+      - limit
+      - offset
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/ExtendedHistory'
+        limit:
+          type: integer
+          format: int32
+        offset:
+          type: integer
+          format: int32
+    Page_Seq_String:
+      title: Page_Seq_String
+      type: object
+      required:
+      - limit
+      - offset
+      properties:
+        content:
+          type: array
+          items:
+            type: string
+        limit:
+          type: integer
+          format: int32
+        offset:
+          type: integer
+          format: int32
+    PrefNode:
+      title: PrefNode
+      type: object
+      required:
+      - name
+      - key
+      - value
+      properties:
+        name:
+          type: string
+        key:
+          type: string
+        value:
+          type: string
+    PrefNodeUpdate:
+      title: PrefNodeUpdate
+      type: object
+      required:
+      - value
+      properties:
+        name:
+          type: string
+        key:
+          type: string
+        value:
+          type: string
+    Rank:
+      title: Rank
+      type: object
+      properties:
+        rankLevel:
+          type: string
+        rankName:
+          type: string
+    RawConcept:
+      title: RawConcept
+      type: object
+      properties:
+        names:
+          type: array
+          uniqueItems: true
+          items:
+            $ref: '#/components/schemas/RawConceptName'
+        metadata:
+          $ref: '#/components/schemas/RawConceptMetadata'
+        children:
+          type: array
+          uniqueItems: true
+          items:
+            $ref: '#/components/schemas/RawConcept'
+        aphiaId:
+          type: integer
+          format: int64
+        rankLevel:
+          type: string
+        rankName:
+          type: string
+        id:
+          type: integer
+          format: int64
+    RawConceptMetadata:
+      title: RawConceptMetadata
+      type: object
+      properties:
+        linkRealizations:
+          type: array
+          items:
+            $ref: '#/components/schemas/RawLink'
+        linkTemplates:
+          type: array
+          items:
+            $ref: '#/components/schemas/RawLink'
+        media:
+          type: array
+          items:
+            $ref: '#/components/schemas/RawMedia'
+        id:
+          type: integer
+          format: int64
+    RawConceptName:
+      title: RawConceptName
+      type: object
+      required:
+      - name
+      - nameType
+      properties:
+        name:
+          type: string
+        nameType:
+          type: string
+        author:
+          type: string
+        id:
+          type: integer
+          format: int64
+    RawLink:
+      title: RawLink
+      type: object
+      required:
+      - linkName
+      - toConcept
+      - linkValue
+      properties:
+        linkName:
+          type: string
+        toConcept:
+          type: string
+        linkValue:
+          type: string
+        id:
+          type: integer
+          format: int64
+    RawMedia:
+      title: RawMedia
+      type: object
+      required:
+      - url
+      properties:
+        url:
+          type: string
+        caption:
+          type: string
+        credit:
+          type: string
+        primaryMedia:
+          type: boolean
+        type:
+          type: string
+        id:
+          type: integer
+          format: int64
+    Reference:
+      title: Reference
+      type: object
+      required:
+      - citation
+      properties:
+        citation:
+          type: string
+        doi:
+          type: string
+        concepts:
+          type: array
+          items:
+            type: string
+        id:
+          type: integer
+          format: int64
+    ReferenceQuery:
+      title: ReferenceQuery
+      type: object
+      properties:
+        doi:
+          type: string
+        citation:
+          type: string
+    ReferenceUpdate:
+      title: ReferenceUpdate
+      type: object
+      properties:
+        citation:
+          type: string
+        doi:
+          type: string
+    SerdeConcept:
+      title: SerdeConcept
+      type: object
+      required:
+      - name
+      properties:
+        name:
+          type: string
+        rank:
+          type: string
+        alternativeNames:
+          type: array
+          items:
+            type: string
+        children:
+          type: array
+          uniqueItems: true
+          items:
+            $ref: '#/components/schemas/SerdeConcept'
+        aphiaId:
+          type: integer
+          format: int64
+    ServerError:
+      title: ServerError
+      type: object
+      required:
+      - message
+      - responseCode
+      properties:
+        message:
+          type: string
+        responseCode:
+          type: integer
+          format: int32
+    Unauthorized:
+      title: Unauthorized
+      type: object
+      required:
+      - message
+      - responseCode
+      properties:
+        message:
+          type: string
+        responseCode:
+          type: integer
+          format: int32
+    UserAccount:
+      title: UserAccount
+      type: object
+      required:
+      - username
+      - password
+      - role
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+        role:
+          type: string
+        affiliation:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+        id:
+          type: integer
+          format: int64
+        isEncrypted:
+          type: boolean
+    UserAccountCreate:
+      title: UserAccountCreate
+      type: object
+      required:
+      - username
+      - password
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+        role:
+          type: string
+        affiliation:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+        first_name:
+          type: string
+        last_name:
+          type: string
+    UserAccountUpdate:
+      title: UserAccountUpdate
+      type: object
+      properties:
+        password:
+          type: string
+        role:
+          type: string
+        affiliation:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+  securitySchemes:
+    httpAuth:
+      type: http
+      scheme: basic
+    httpAuth1:
+      type: http
+      scheme: bearer
