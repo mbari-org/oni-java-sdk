@@ -64,6 +64,12 @@ public class ConceptAssociationTemplate implements Details {
         return result;
     }
 
+
+    public static ConceptAssociationTemplate fromKiota(
+            org.mbari.vars.oni.sdk.kiota.models.Link kiota) {
+        return new ConceptAssociationTemplate(kiota.getLinkName(), kiota.getToConcept(), kiota.getLinkValue());
+    }
+
     
 
 

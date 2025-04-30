@@ -118,10 +118,15 @@ public class Concept {
 
     public static Concept fromKiota(ConceptMetadata kiota) {
 
-        return new Concept(kiota.getName(),
+        var concept =  new Concept(kiota.getName(),
                 kiota.getRank(),
                 kiota.getAlternateNames(),
                 List.of());
+
+        var conceptDetails = ConceptDetails.fromKiota(kiota);
+        concept.setConceptDetails(conceptDetails);
+
+        return concept;
     }
 
     public SerdeConcept toKiota() {

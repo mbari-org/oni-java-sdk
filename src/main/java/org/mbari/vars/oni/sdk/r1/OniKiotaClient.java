@@ -1,17 +1,12 @@
 package org.mbari.vars.oni.sdk.r1;
 
 import java.net.URI;
-import java.time.Duration;
-import java.time.Instant;
-import java.time.ZoneOffset;
-import java.util.HexFormat;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
+
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
 import org.mbari.vars.oni.sdk.OniFactory;
 import org.mbari.vars.oni.sdk.kiota.Oni;
 import org.mbari.vars.oni.sdk.r1.models.Concept;
@@ -102,26 +97,65 @@ public class OniKiotaClient implements ConceptService{
 
     @Override
     public CompletableFuture<List<ConceptAssociationTemplate>> findAllTemplates() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'findAllTemplates'");
+        return CompletableFuture.supplyAsync(() -> {
+            var response = oni.v1()
+                .links()
+                .get();
+            if (response == null) {
+                return List.of();
+            }
+            return response.stream()
+                .map(ConceptAssociationTemplate::fromKiota)
+                .toList();
+        }, executor);
     }
 
     @Override
     public CompletableFuture<List<ConceptAssociationTemplate>> findTemplates(String name) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'findTemplates'");
+        return CompletableFuture.supplyAsync(() -> {
+            var response = oni.v1()
+                .links()
+                .byName(name)
+                .get();
+            if (response == null) {
+                return List.of();
+            }
+            return response.stream()
+                .map(ConceptAssociationTemplate::fromKiota)
+                .toList();
+        }, executor);
     }
 
     @Override
     public CompletableFuture<List<ConceptAssociationTemplate>> findTemplates(String name, String linkname) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'findTemplates'");
+        return CompletableFuture.supplyAsync(() -> {
+            var response = oni.v1()
+                .links()
+                .byName(name)
+                .using()
+                .byLinkName(linkname)
+                .get();
+            if (response == null) {
+                return List.of();
+            }
+            return response.stream()
+                .map(ConceptAssociationTemplate::fromKiota)
+                .toList();
+        }, executor);
     }
 
     @Override
     public CompletableFuture<Optional<Concept>> findConcept(String name) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'findConcept'");
+        return CompletableFuture.supplyAsync(() -> {
+            var response = oni.v1()
+                .concept()
+                .byName(name)
+                .get();
+            if (response == null) {
+                return Optional.empty();
+            }
+            return Optional.of(Concept.fromKiota(response));
+        }, executor);
     }
 
 

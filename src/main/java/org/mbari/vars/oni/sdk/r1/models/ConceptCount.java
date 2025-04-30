@@ -1,4 +1,4 @@
-package org.mbari.vars.services.model;
+package org.mbari.vars.oni.sdk.r1.models;
 
 /**
  * {"concept":"Nanomia", "count":"55"}
