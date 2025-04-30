@@ -26,6 +26,10 @@ public class OniKiotaClient implements ConceptService{
         this(OniFactory.create(baseUri.toString(), accessToken));
     }
 
+    public OniKiotaClient(URI baseUri) {
+        this(OniFactory.create(baseUri.toString()));
+    }
+
     @Override
     public CompletableFuture<Concept> findRoot() {
         return CompletableFuture.supplyAsync(() -> {

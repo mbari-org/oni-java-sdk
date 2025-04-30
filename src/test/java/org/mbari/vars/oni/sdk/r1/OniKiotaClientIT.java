@@ -19,6 +19,15 @@ public class OniKiotaClientIT {
     }
 
     @Test
+    public void testFindRootRO() {
+        var client = new OniKiotaClient(URI.create("https://gehenna.shore.mbari.org/kb"));
+        var root = client.findRoot().join();
+        assertNotNull(root);
+        assertEquals("object", root.getName());
+    }
+
+
+    @Test
     public void testFindRootDetails() {
         var client = new OniKiotaClient(URI.create("https://gehenna.shore.mbari.org/kb"), "foo");
         var root = client.findRootDetails().join();
