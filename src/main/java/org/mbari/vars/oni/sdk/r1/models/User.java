@@ -1,5 +1,9 @@
 package org.mbari.vars.oni.sdk.r1.models;
 
+import org.mbari.vars.oni.sdk.kiota.models.UserAccount;
+import org.mbari.vars.oni.sdk.kiota.models.UserAccountCreate;
+import org.mbari.vars.oni.sdk.kiota.models.UserAccountUpdate;
+
 /**
  * @author Brian Schlining
  * @since 2017-05-11T13:37:00
@@ -80,4 +84,50 @@ public class User {
     public void setRole(String role) {
         this.role = role;
     }
+
+    public static User fromKiota(UserAccount userAccount) {
+        return new User(userAccount.getUsername(),
+                userAccount.getPassword(),
+                userAccount.getRole(),
+                userAccount.getFirstName(),
+                userAccount.getLastName(),
+                userAccount.getAffiliation(),
+                userAccount.getEmail());
+    }
+
+    public UserAccount toKiota() {
+        var userAccount = new UserAccount();
+        userAccount.setUsername(username);
+        userAccount.setPassword(password);
+        userAccount.setRole(role);
+        userAccount.setFirstName(firstName);
+        userAccount.setLastName(lastName);
+        userAccount.setAffiliation(affiliation);
+        userAccount.setEmail(email);
+        return userAccount;
+    }
+
+    public UserAccountCreate toKiotaCreate() {
+        var userAccountCreate = new UserAccountCreate();
+        userAccountCreate.setUsername(username);
+        userAccountCreate.setPassword(password);
+        userAccountCreate.setRole(role);
+        userAccountCreate.setFirstName(firstName);
+        userAccountCreate.setLastName(lastName);
+        userAccountCreate.setAffiliation(affiliation);
+        userAccountCreate.setEmail(email);
+        return userAccountCreate;
+    }
+
+    public UserAccountUpdate toKiotaUpdate() {
+        var userAccountUpdate = new UserAccountUpdate();
+        // userAccountUpdate.setUsername(username);
+        userAccountUpdate.setRole(role);
+        userAccountUpdate.setFirstName(firstName);
+        userAccountUpdate.setLastName(lastName);
+        userAccountUpdate.setAffiliation(affiliation);
+        userAccountUpdate.setEmail(email);
+        return userAccountUpdate;
+    }
+
 }

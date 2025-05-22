@@ -1,6 +1,7 @@
 package org.mbari.vars.oni.sdk.r1.models;
 
-
+import org.mbari.vars.oni.sdk.kiota.models.PrefNode;
+import org.mbari.vars.oni.sdk.kiota.models.PrefNodeUpdate;
 
 /**
  * @author Brian Schlining
@@ -70,4 +71,26 @@ public class PreferenceNode {
 
         return true;
     }
+
+    public PrefNode toKiota() {
+        PrefNode node = new PrefNode();
+        node.setName(name);
+        node.setKey(key);
+        node.setValue(value);
+        return node;
+    }
+
+    public PrefNodeUpdate toKiotaUpdate() {
+        PrefNodeUpdate node = new PrefNodeUpdate();
+        node.setName(name);
+        node.setKey(key);
+        node.setValue(value);
+        return node;
+    }
+
+    public static PreferenceNode fromKiota(PrefNode node) {
+        return new PreferenceNode(node.getName(), node.getKey(), node.getValue());
+    }
+
+
 }

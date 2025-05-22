@@ -12,8 +12,10 @@ import org.mbari.vars.oni.sdk.kiota.Oni;
 import org.mbari.vars.oni.sdk.r1.models.Concept;
 import org.mbari.vars.oni.sdk.r1.models.ConceptAssociationTemplate;
 import org.mbari.vars.oni.sdk.r1.models.ConceptDetails;
+import org.mbari.vars.oni.sdk.r1.models.PreferenceNode;
+import org.mbari.vars.oni.sdk.r1.models.User;
 
-public class OniKiotaClient implements ConceptService{
+public class OniKiotaClient implements ConceptService, UserService, PreferencesService {
 
     private final Oni oni;
     protected final ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
@@ -159,6 +161,139 @@ public class OniKiotaClient implements ConceptService{
                 return Optional.empty();
             }
             return Optional.of(Concept.fromKiota(response));
+        }, executor);
+    }
+
+    @Override
+    public CompletableFuture<List<User>> findAllUsers() {
+        return CompletableFuture.supplyAsync(() -> {
+            var response = oni.v1()
+                .users()
+                .get();
+            if (response == null) {
+                return List.of();
+            }
+            return response.stream()
+                .map(User::fromKiota)
+                .toList();
+        }, executor);
+    }
+
+    @Override
+    public CompletableFuture<User> create(User user) {
+        return CompletableFuture.supplyAsync(() -> {
+            var response = oni.v1()
+                .users()
+                .post(user.toKiotaCreate());
+            if (response == null) {
+                return null;
+            }
+            return User.fromKiota(response);
+        }, executor);
+    }
+
+    @Override
+    public CompletableFuture<Optional<User>> update(User user) {
+        return CompletableFuture.supplyAsync(() -> {
+            var response = oni.v1()
+                .users()
+                .byName(user.getUsername())
+                .put(user.toKiotaUpdate());
+            if (response == null) {
+                return Optional.empty();
+            }
+            return Optional.of(User.fromKiota(response));
+        }, executor);
+    }
+
+    @Override
+    public CompletableFuture<PreferenceNode> create(PreferenceNode node) {
+        return CompletableFuture.supplyAsync(() -> {
+            var prefNode = oni.v1()
+                .prefs()
+                .post(node.toKiota());
+            if (prefNode == null) {
+                return null;
+            }
+            return PreferenceNode.fromKiota(prefNode);
+        }, executor);
+    }
+
+    @Override
+    public CompletableFuture<Optional<PreferenceNode>> update(PreferenceNode node) {
+        return CompletableFuture.supplyAsync(() -> {
+            var prefNode = oni.v1()
+                .prefs()
+                .put(node.toKiotaUpdate());
+            if (prefNode == null) {
+                return Optional.empty();
+            }
+            return Optional.of(PreferenceNode.fromKiota(prefNode));
+        }, executor);
+    }
+
+    @Override
+    public CompletableFuture<Void> delete(PreferenceNode node) {
+        return CompletableFuture.runAsync(() -> {
+            oni.v1()
+                .prefs()
+                .delete(requestConfiguration -> {
+                    requestConfiguration.queryParameters.name = node.getName();
+                    requestConfiguration.queryParameters.key = node.getKey();
+                });
+        }, executor);
+    }
+
+    @Override
+    public CompletableFuture<List<PreferenceNode>> findByName(String nodeName) {
+        return CompletableFuture.supplyAsync(() -> {
+            var response = oni.v1()
+                .prefs()
+                .get(requestConfiguration -> {
+                    requestConfiguration.queryParameters.name = nodeName;
+                });
+            if (response == null) {
+                return List.of();
+            }
+            return response.stream()
+                .map(PreferenceNode::fromKiota)
+                .toList();
+        }, executor);
+    }
+
+    @Override
+    public CompletableFuture<List<PreferenceNode>> findByNameLike(String prefix) {
+        return CompletableFuture.supplyAsync(() -> {
+            var response = oni.v1()
+                .prefs()
+                .startswith()
+                .get(requestConfiguration -> {
+                    requestConfiguration.queryParameters.prefix = prefix;
+                });
+            if (response == null) {
+                return List.of();
+            }
+            return response.stream()
+                .map(PreferenceNode::fromKiota)
+                .toList();
+        }, executor);
+    }
+
+    @Override
+    public CompletableFuture<Optional<PreferenceNode>> findByNameAndKey(String nodeName, String key) {
+        return CompletableFuture.supplyAsync(() -> {
+            var response = oni.v1()
+                .prefs()
+                .get(requestConfiguration -> {
+                    requestConfiguration.queryParameters.name = nodeName;
+                    requestConfiguration.queryParameters.key = key;
+                });
+            if (response == null) {
+                return Optional.empty();
+            }
+            return response.stream()
+                .map(PreferenceNode::fromKiota)
+                .findFirst();
         }, executor);
     }
 
