@@ -1,0 +1,8 @@
+module oni.java.sdk {
+    requires annotations;
+    requires com.auth0.jwt;
+    requires com.github.benmanes.caffeine;
+//    requires com.microsoft.kiota.http;
+    requires okhttp3;
+    requires okhttp3.logging;
+}

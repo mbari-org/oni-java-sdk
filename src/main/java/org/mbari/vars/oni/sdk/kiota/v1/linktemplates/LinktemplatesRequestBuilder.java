@@ -3,6 +3,7 @@ package org.mbari.vars.oni.sdk.kiota.v1.linktemplates;
 import com.microsoft.kiota.BaseRequestBuilder;
 import com.microsoft.kiota.BaseRequestConfiguration;
 import com.microsoft.kiota.HttpMethod;
+import com.microsoft.kiota.QueryParameters;
 import com.microsoft.kiota.RequestAdapter;
 import com.microsoft.kiota.RequestInformation;
 import com.microsoft.kiota.RequestOption;
@@ -16,11 +17,14 @@ import org.mbari.vars.oni.sdk.kiota.models.BadRequest;
 import org.mbari.vars.oni.sdk.kiota.models.ExtendedLink;
 import org.mbari.vars.oni.sdk.kiota.models.LinkCreate;
 import org.mbari.vars.oni.sdk.kiota.models.NotFound;
+import org.mbari.vars.oni.sdk.kiota.models.PageSeqExtendedLink;
 import org.mbari.vars.oni.sdk.kiota.models.ServerError;
 import org.mbari.vars.oni.sdk.kiota.models.Unauthorized;
 import org.mbari.vars.oni.sdk.kiota.v1.linktemplates.concept.ConceptRequestBuilder;
+import org.mbari.vars.oni.sdk.kiota.v1.linktemplates.count.CountRequestBuilder;
 import org.mbari.vars.oni.sdk.kiota.v1.linktemplates.item.LinktemplatesItemRequestBuilder;
 import org.mbari.vars.oni.sdk.kiota.v1.linktemplates.prototype.PrototypeRequestBuilder;
+import org.mbari.vars.oni.sdk.kiota.v1.linktemplates.query.QueryRequestBuilder;
 import org.mbari.vars.oni.sdk.kiota.v1.linktemplates.toconcept.ToconceptRequestBuilder;
 /**
  * Builds and executes requests for operations under /v1/linktemplates
@@ -36,12 +40,28 @@ public class LinktemplatesRequestBuilder extends BaseRequestBuilder {
         return new ConceptRequestBuilder(pathParameters, requestAdapter);
     }
     /**
+     * The count property
+     * @return a {@link CountRequestBuilder}
+     */
+    @jakarta.annotation.Nonnull
+    public CountRequestBuilder count() {
+        return new CountRequestBuilder(pathParameters, requestAdapter);
+    }
+    /**
      * The prototype property
      * @return a {@link PrototypeRequestBuilder}
      */
     @jakarta.annotation.Nonnull
     public PrototypeRequestBuilder prototype() {
         return new PrototypeRequestBuilder(pathParameters, requestAdapter);
+    }
+    /**
+     * The query property
+     * @return a {@link QueryRequestBuilder}
+     */
+    @jakarta.annotation.Nonnull
+    public QueryRequestBuilder query() {
+        return new QueryRequestBuilder(pathParameters, requestAdapter);
     }
     /**
      * The toconcept property
@@ -69,7 +89,7 @@ public class LinktemplatesRequestBuilder extends BaseRequestBuilder {
      * @param requestAdapter The request adapter to use to execute the requests.
      */
     public LinktemplatesRequestBuilder(@jakarta.annotation.Nonnull final HashMap<String, Object> pathParameters, @jakarta.annotation.Nonnull final RequestAdapter requestAdapter) {
-        super(requestAdapter, "{+baseurl}/v1/linktemplates", pathParameters);
+        super(requestAdapter, "{+baseurl}/v1/linktemplates{?limit*,offset*}", pathParameters);
     }
     /**
      * Instantiates a new {@link LinktemplatesRequestBuilder} and sets the default values.
@@ -77,7 +97,35 @@ public class LinktemplatesRequestBuilder extends BaseRequestBuilder {
      * @param requestAdapter The request adapter to use to execute the requests.
      */
     public LinktemplatesRequestBuilder(@jakarta.annotation.Nonnull final String rawUrl, @jakarta.annotation.Nonnull final RequestAdapter requestAdapter) {
-        super(requestAdapter, "{+baseurl}/v1/linktemplates", rawUrl);
+        super(requestAdapter, "{+baseurl}/v1/linktemplates{?limit*,offset*}", rawUrl);
+    }
+    /**
+     * Find all link templates
+     * @return a {@link PageSeqExtendedLink}
+     * @throws BadRequest When receiving a 400 status code
+     * @throws NotFound When receiving a 404 status code
+     * @throws ServerError When receiving a 500 status code
+     */
+    @jakarta.annotation.Nullable
+    public PageSeqExtendedLink get() {
+        return get(null);
+    }
+    /**
+     * Find all link templates
+     * @param requestConfiguration Configuration for the request such as headers, query parameters, and middleware options.
+     * @return a {@link PageSeqExtendedLink}
+     * @throws BadRequest When receiving a 400 status code
+     * @throws NotFound When receiving a 404 status code
+     * @throws ServerError When receiving a 500 status code
+     */
+    @jakarta.annotation.Nullable
+    public PageSeqExtendedLink get(@jakarta.annotation.Nullable final java.util.function.Consumer<GetRequestConfiguration> requestConfiguration) {
+        final RequestInformation requestInfo = toGetRequestInformation(requestConfiguration);
+        final HashMap<String, ParsableFactory<? extends Parsable>> errorMapping = new HashMap<String, ParsableFactory<? extends Parsable>>();
+        errorMapping.put("400", BadRequest::createFromDiscriminatorValue);
+        errorMapping.put("404", NotFound::createFromDiscriminatorValue);
+        errorMapping.put("500", ServerError::createFromDiscriminatorValue);
+        return this.requestAdapter.send(requestInfo, errorMapping, PageSeqExtendedLink::createFromDiscriminatorValue);
     }
     /**
      * Create a new link template
@@ -114,6 +162,26 @@ public class LinktemplatesRequestBuilder extends BaseRequestBuilder {
         return this.requestAdapter.send(requestInfo, errorMapping, ExtendedLink::createFromDiscriminatorValue);
     }
     /**
+     * Find all link templates
+     * @return a {@link RequestInformation}
+     */
+    @jakarta.annotation.Nonnull
+    public RequestInformation toGetRequestInformation() {
+        return toGetRequestInformation(null);
+    }
+    /**
+     * Find all link templates
+     * @param requestConfiguration Configuration for the request such as headers, query parameters, and middleware options.
+     * @return a {@link RequestInformation}
+     */
+    @jakarta.annotation.Nonnull
+    public RequestInformation toGetRequestInformation(@jakarta.annotation.Nullable final java.util.function.Consumer<GetRequestConfiguration> requestConfiguration) {
+        final RequestInformation requestInfo = new RequestInformation(HttpMethod.GET, urlTemplate, pathParameters);
+        requestInfo.configure(requestConfiguration, GetRequestConfiguration::new, x -> x.queryParameters);
+        requestInfo.headers.tryAdd("Accept", "application/json");
+        return requestInfo;
+    }
+    /**
      * Create a new link template
      * @param body The request body
      * @return a {@link RequestInformation}
@@ -146,6 +214,44 @@ public class LinktemplatesRequestBuilder extends BaseRequestBuilder {
     public LinktemplatesRequestBuilder withUrl(@jakarta.annotation.Nonnull final String rawUrl) {
         Objects.requireNonNull(rawUrl);
         return new LinktemplatesRequestBuilder(rawUrl, requestAdapter);
+    }
+    /**
+     * Find all link templates
+     */
+    @jakarta.annotation.Generated("com.microsoft.kiota")
+    public class GetQueryParameters implements QueryParameters {
+        /**
+         * Limit for paging
+         */
+        @jakarta.annotation.Nullable
+        public Integer limit;
+        /**
+         * Offset for paging
+         */
+        @jakarta.annotation.Nullable
+        public Integer offset;
+        /**
+         * Extracts the query parameters into a map for the URI template parsing.
+         * @return a {@link Map<String, Object>}
+         */
+        @jakarta.annotation.Nonnull
+        public Map<String, Object> toQueryParameters() {
+            final Map<String, Object> allQueryParams = new HashMap();
+            allQueryParams.put("limit", limit);
+            allQueryParams.put("offset", offset);
+            return allQueryParams;
+        }
+    }
+    /**
+     * Configuration for the request such as headers, query parameters, and middleware options.
+     */
+    @jakarta.annotation.Generated("com.microsoft.kiota")
+    public class GetRequestConfiguration extends BaseRequestConfiguration {
+        /**
+         * Request query parameters
+         */
+        @jakarta.annotation.Nullable
+        public GetQueryParameters queryParameters = new GetQueryParameters();
     }
     /**
      * Configuration for the request such as headers, query parameters, and middleware options.

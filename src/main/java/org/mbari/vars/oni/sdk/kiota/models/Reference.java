@@ -30,6 +30,10 @@ public class Reference implements AdditionalDataHolder, Parsable {
      */
     private Long id;
     /**
+     * The lastUpdated property
+     */
+    private String lastUpdated;
+    /**
      * Instantiates a new {@link Reference} and sets the default values.
      */
     public Reference() {
@@ -83,11 +87,12 @@ public class Reference implements AdditionalDataHolder, Parsable {
      */
     @jakarta.annotation.Nonnull
     public Map<String, java.util.function.Consumer<ParseNode>> getFieldDeserializers() {
-        final HashMap<String, java.util.function.Consumer<ParseNode>> deserializerMap = new HashMap<String, java.util.function.Consumer<ParseNode>>(4);
+        final HashMap<String, java.util.function.Consumer<ParseNode>> deserializerMap = new HashMap<String, java.util.function.Consumer<ParseNode>>(5);
         deserializerMap.put("citation", (n) -> { this.setCitation(n.getStringValue()); });
         deserializerMap.put("concepts", (n) -> { this.setConcepts(n.getCollectionOfPrimitiveValues(String.class)); });
         deserializerMap.put("doi", (n) -> { this.setDoi(n.getStringValue()); });
         deserializerMap.put("id", (n) -> { this.setId(n.getLongValue()); });
+        deserializerMap.put("lastUpdated", (n) -> { this.setLastUpdated(n.getStringValue()); });
         return deserializerMap;
     }
     /**
@@ -99,6 +104,14 @@ public class Reference implements AdditionalDataHolder, Parsable {
         return this.id;
     }
     /**
+     * Gets the lastUpdated property value. The lastUpdated property
+     * @return a {@link String}
+     */
+    @jakarta.annotation.Nullable
+    public String getLastUpdated() {
+        return this.lastUpdated;
+    }
+    /**
      * Serializes information the current object
      * @param writer Serialization writer to use to serialize this model
      */
@@ -108,6 +121,7 @@ public class Reference implements AdditionalDataHolder, Parsable {
         writer.writeCollectionOfPrimitiveValues("concepts", this.getConcepts());
         writer.writeStringValue("doi", this.getDoi());
         writer.writeLongValue("id", this.getId());
+        writer.writeStringValue("lastUpdated", this.getLastUpdated());
         writer.writeAdditionalData(this.getAdditionalData());
     }
     /**
@@ -144,5 +158,12 @@ public class Reference implements AdditionalDataHolder, Parsable {
      */
     public void setId(@jakarta.annotation.Nullable final Long value) {
         this.id = value;
+    }
+    /**
+     * Sets the lastUpdated property value. The lastUpdated property
+     * @param value Value to set for the lastUpdated property.
+     */
+    public void setLastUpdated(@jakarta.annotation.Nullable final String value) {
+        this.lastUpdated = value;
     }
 }

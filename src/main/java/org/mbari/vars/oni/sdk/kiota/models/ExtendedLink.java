@@ -22,6 +22,10 @@ public class ExtendedLink implements AdditionalDataHolder, Parsable {
      */
     private Long id;
     /**
+     * The lastUpdated property
+     */
+    private String lastUpdated;
+    /**
      * The linkName property
      */
     private String linkName;
@@ -71,9 +75,10 @@ public class ExtendedLink implements AdditionalDataHolder, Parsable {
      */
     @jakarta.annotation.Nonnull
     public Map<String, java.util.function.Consumer<ParseNode>> getFieldDeserializers() {
-        final HashMap<String, java.util.function.Consumer<ParseNode>> deserializerMap = new HashMap<String, java.util.function.Consumer<ParseNode>>(5);
+        final HashMap<String, java.util.function.Consumer<ParseNode>> deserializerMap = new HashMap<String, java.util.function.Consumer<ParseNode>>(6);
         deserializerMap.put("concept", (n) -> { this.setConcept(n.getStringValue()); });
         deserializerMap.put("id", (n) -> { this.setId(n.getLongValue()); });
+        deserializerMap.put("lastUpdated", (n) -> { this.setLastUpdated(n.getStringValue()); });
         deserializerMap.put("linkName", (n) -> { this.setLinkName(n.getStringValue()); });
         deserializerMap.put("linkValue", (n) -> { this.setLinkValue(n.getStringValue()); });
         deserializerMap.put("toConcept", (n) -> { this.setToConcept(n.getStringValue()); });
@@ -86,6 +91,14 @@ public class ExtendedLink implements AdditionalDataHolder, Parsable {
     @jakarta.annotation.Nullable
     public Long getId() {
         return this.id;
+    }
+    /**
+     * Gets the lastUpdated property value. The lastUpdated property
+     * @return a {@link String}
+     */
+    @jakarta.annotation.Nullable
+    public String getLastUpdated() {
+        return this.lastUpdated;
     }
     /**
      * Gets the linkName property value. The linkName property
@@ -119,6 +132,7 @@ public class ExtendedLink implements AdditionalDataHolder, Parsable {
         Objects.requireNonNull(writer);
         writer.writeStringValue("concept", this.getConcept());
         writer.writeLongValue("id", this.getId());
+        writer.writeStringValue("lastUpdated", this.getLastUpdated());
         writer.writeStringValue("linkName", this.getLinkName());
         writer.writeStringValue("linkValue", this.getLinkValue());
         writer.writeStringValue("toConcept", this.getToConcept());
@@ -144,6 +158,13 @@ public class ExtendedLink implements AdditionalDataHolder, Parsable {
      */
     public void setId(@jakarta.annotation.Nullable final Long value) {
         this.id = value;
+    }
+    /**
+     * Sets the lastUpdated property value. The lastUpdated property
+     * @param value Value to set for the lastUpdated property.
+     */
+    public void setLastUpdated(@jakarta.annotation.Nullable final String value) {
+        this.lastUpdated = value;
     }
     /**
      * Sets the linkName property value. The linkName property

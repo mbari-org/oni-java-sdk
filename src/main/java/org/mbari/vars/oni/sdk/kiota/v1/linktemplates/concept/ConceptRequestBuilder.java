@@ -4,12 +4,21 @@ import com.microsoft.kiota.BaseRequestBuilder;
 import com.microsoft.kiota.RequestAdapter;
 import java.util.HashMap;
 import java.util.Objects;
+import org.mbari.vars.oni.sdk.kiota.v1.linktemplates.concept.count.CountRequestBuilder;
 import org.mbari.vars.oni.sdk.kiota.v1.linktemplates.concept.item.WithConceptNameItemRequestBuilder;
 /**
  * Builds and executes requests for operations under /v1/linktemplates/concept
  */
 @jakarta.annotation.Generated("com.microsoft.kiota")
 public class ConceptRequestBuilder extends BaseRequestBuilder {
+    /**
+     * The count property
+     * @return a {@link CountRequestBuilder}
+     */
+    @jakarta.annotation.Nonnull
+    public CountRequestBuilder count() {
+        return new CountRequestBuilder(pathParameters, requestAdapter);
+    }
     /**
      * Gets an item from the org.mbari.vars.oni.sdk.kiota.v1.linktemplates.concept.item collection
      * @param conceptName Unique identifier of the item

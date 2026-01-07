@@ -1,4 +1,4 @@
-package org.mbari.vars.oni.sdk.kiota.v1.phylogeny.down.item;
+package org.mbari.vars.oni.sdk.kiota.v1.references.query.doi;
 
 import com.microsoft.kiota.BaseRequestBuilder;
 import com.microsoft.kiota.BaseRequestConfiguration;
@@ -14,91 +14,99 @@ import java.util.Map;
 import java.util.Objects;
 import org.mbari.vars.oni.sdk.kiota.models.BadRequest;
 import org.mbari.vars.oni.sdk.kiota.models.NotFound;
-import org.mbari.vars.oni.sdk.kiota.models.SerdeConcept;
+import org.mbari.vars.oni.sdk.kiota.models.Reference;
+import org.mbari.vars.oni.sdk.kiota.models.ReferenceQuery;
 import org.mbari.vars.oni.sdk.kiota.models.ServerError;
 /**
- * Builds and executes requests for operations under /v1/phylogeny/down/{name}
+ * Builds and executes requests for operations under /v1/references/query/doi
  */
 @jakarta.annotation.Generated("com.microsoft.kiota")
-public class WithNameItemRequestBuilder extends BaseRequestBuilder {
+public class DoiRequestBuilder extends BaseRequestBuilder {
     /**
-     * Instantiates a new {@link WithNameItemRequestBuilder} and sets the default values.
+     * Instantiates a new {@link DoiRequestBuilder} and sets the default values.
      * @param pathParameters Path parameters for the request
      * @param requestAdapter The request adapter to use to execute the requests.
      */
-    public WithNameItemRequestBuilder(@jakarta.annotation.Nonnull final HashMap<String, Object> pathParameters, @jakarta.annotation.Nonnull final RequestAdapter requestAdapter) {
-        super(requestAdapter, "{+baseurl}/v1/phylogeny/down/{name}", pathParameters);
+    public DoiRequestBuilder(@jakarta.annotation.Nonnull final HashMap<String, Object> pathParameters, @jakarta.annotation.Nonnull final RequestAdapter requestAdapter) {
+        super(requestAdapter, "{+baseurl}/v1/references/query/doi", pathParameters);
     }
     /**
-     * Instantiates a new {@link WithNameItemRequestBuilder} and sets the default values.
+     * Instantiates a new {@link DoiRequestBuilder} and sets the default values.
      * @param rawUrl The raw URL to use for the request builder.
      * @param requestAdapter The request adapter to use to execute the requests.
      */
-    public WithNameItemRequestBuilder(@jakarta.annotation.Nonnull final String rawUrl, @jakarta.annotation.Nonnull final RequestAdapter requestAdapter) {
-        super(requestAdapter, "{+baseurl}/v1/phylogeny/down/{name}", rawUrl);
+    public DoiRequestBuilder(@jakarta.annotation.Nonnull final String rawUrl, @jakarta.annotation.Nonnull final RequestAdapter requestAdapter) {
+        super(requestAdapter, "{+baseurl}/v1/references/query/doi", rawUrl);
     }
     /**
-     * Find the branch from the given concept down to the leaves
-     * @return a {@link SerdeConcept}
+     * Find a reference by DOI
+     * @param body The request body
+     * @return a {@link Reference}
      * @throws BadRequest When receiving a 400 status code
      * @throws NotFound When receiving a 404 status code
      * @throws ServerError When receiving a 500 status code
      */
     @jakarta.annotation.Nullable
-    public SerdeConcept get() {
-        return get(null);
+    public Reference post(@jakarta.annotation.Nonnull final ReferenceQuery body) {
+        return post(body, null);
     }
     /**
-     * Find the branch from the given concept down to the leaves
+     * Find a reference by DOI
+     * @param body The request body
      * @param requestConfiguration Configuration for the request such as headers, query parameters, and middleware options.
-     * @return a {@link SerdeConcept}
+     * @return a {@link Reference}
      * @throws BadRequest When receiving a 400 status code
      * @throws NotFound When receiving a 404 status code
      * @throws ServerError When receiving a 500 status code
      */
     @jakarta.annotation.Nullable
-    public SerdeConcept get(@jakarta.annotation.Nullable final java.util.function.Consumer<GetRequestConfiguration> requestConfiguration) {
-        final RequestInformation requestInfo = toGetRequestInformation(requestConfiguration);
+    public Reference post(@jakarta.annotation.Nonnull final ReferenceQuery body, @jakarta.annotation.Nullable final java.util.function.Consumer<PostRequestConfiguration> requestConfiguration) {
+        Objects.requireNonNull(body);
+        final RequestInformation requestInfo = toPostRequestInformation(body, requestConfiguration);
         final HashMap<String, ParsableFactory<? extends Parsable>> errorMapping = new HashMap<String, ParsableFactory<? extends Parsable>>();
         errorMapping.put("400", BadRequest::createFromDiscriminatorValue);
         errorMapping.put("404", NotFound::createFromDiscriminatorValue);
         errorMapping.put("500", ServerError::createFromDiscriminatorValue);
-        return this.requestAdapter.send(requestInfo, errorMapping, SerdeConcept::createFromDiscriminatorValue);
+        return this.requestAdapter.send(requestInfo, errorMapping, Reference::createFromDiscriminatorValue);
     }
     /**
-     * Find the branch from the given concept down to the leaves
+     * Find a reference by DOI
+     * @param body The request body
      * @return a {@link RequestInformation}
      */
     @jakarta.annotation.Nonnull
-    public RequestInformation toGetRequestInformation() {
-        return toGetRequestInformation(null);
+    public RequestInformation toPostRequestInformation(@jakarta.annotation.Nonnull final ReferenceQuery body) {
+        return toPostRequestInformation(body, null);
     }
     /**
-     * Find the branch from the given concept down to the leaves
+     * Find a reference by DOI
+     * @param body The request body
      * @param requestConfiguration Configuration for the request such as headers, query parameters, and middleware options.
      * @return a {@link RequestInformation}
      */
     @jakarta.annotation.Nonnull
-    public RequestInformation toGetRequestInformation(@jakarta.annotation.Nullable final java.util.function.Consumer<GetRequestConfiguration> requestConfiguration) {
-        final RequestInformation requestInfo = new RequestInformation(HttpMethod.GET, urlTemplate, pathParameters);
-        requestInfo.configure(requestConfiguration, GetRequestConfiguration::new);
+    public RequestInformation toPostRequestInformation(@jakarta.annotation.Nonnull final ReferenceQuery body, @jakarta.annotation.Nullable final java.util.function.Consumer<PostRequestConfiguration> requestConfiguration) {
+        Objects.requireNonNull(body);
+        final RequestInformation requestInfo = new RequestInformation(HttpMethod.POST, urlTemplate, pathParameters);
+        requestInfo.configure(requestConfiguration, PostRequestConfiguration::new);
         requestInfo.headers.tryAdd("Accept", "application/json");
+        requestInfo.setContentFromParsable(requestAdapter, "application/json", body);
         return requestInfo;
     }
     /**
      * Returns a request builder with the provided arbitrary URL. Using this method means any other path or query parameters are ignored.
      * @param rawUrl The raw URL to use for the request builder.
-     * @return a {@link WithNameItemRequestBuilder}
+     * @return a {@link DoiRequestBuilder}
      */
     @jakarta.annotation.Nonnull
-    public WithNameItemRequestBuilder withUrl(@jakarta.annotation.Nonnull final String rawUrl) {
+    public DoiRequestBuilder withUrl(@jakarta.annotation.Nonnull final String rawUrl) {
         Objects.requireNonNull(rawUrl);
-        return new WithNameItemRequestBuilder(rawUrl, requestAdapter);
+        return new DoiRequestBuilder(rawUrl, requestAdapter);
     }
     /**
      * Configuration for the request such as headers, query parameters, and middleware options.
      */
     @jakarta.annotation.Generated("com.microsoft.kiota")
-    public class GetRequestConfiguration extends BaseRequestConfiguration {
+    public class PostRequestConfiguration extends BaseRequestConfiguration {
     }
 }
