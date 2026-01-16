@@ -18,5 +18,9 @@ public interface UserService {
 
     CompletableFuture<Optional<User>> update(User user);
 
+    CompletableFuture<Optional<User>> findByUsername(String username);
+
+    CompletableFuture<Optional<User>> changePassword(String user, String oldPassword, String newPassword);
+
 
 }

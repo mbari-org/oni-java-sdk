@@ -1,7 +1,7 @@
-openapi: 3.1.0
+openapi: 3.0.0
 info:
   title: oni
-  version: 1.5.1
+  version: 1.7.13
 paths:
   /v1/auth/login:
     post:
@@ -1299,6 +1299,45 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ServerError'
+  /v1/linkrealizations/query/linkname/{linkName}:
+    get:
+      tags:
+      - LinkRealizations
+      description: Find all link realizations by link name
+      operationId: findLinkRealizationsByLinkName
+      parameters:
+      - name: linkName
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ExtendedLink'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
   /v1/linkrealizations/prototype:
     post:
       tags:
@@ -1338,7 +1377,83 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ServerError'
+  /v1/linkrealizations/count:
+    get:
+      tags:
+      - LinkRealizations
+      description: Count all link realizations
+      operationId: countAllLinkRealizations
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Count'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
   /v1/linkrealizations:
+    get:
+      tags:
+      - LinkRealizations
+      description: Find all link realizations
+      operationId: findAllLinkRealizations
+      parameters:
+      - name: offset
+        in: query
+        description: Offset for paging
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: limit
+        in: query
+        description: Limit for paging
+        required: false
+        schema:
+          type: integer
+          format: int32
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Page_Seq_ExtendedLink'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
     post:
       tags:
       - LinkRealizations
@@ -1566,6 +1681,44 @@ paths:
       security:
       - {}
       - httpAuth1: []
+  /v1/linktemplates/concept/count/{conceptName}:
+    get:
+      tags:
+      - LinkTemplates
+      description: Count all link templates by concept name
+      operationId: countLinkTemplatesByConceptName
+      parameters:
+      - name: conceptName
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: integer
+                format: int64
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
   /v1/linktemplates/concept/{conceptName}:
     get:
       tags:
@@ -1617,6 +1770,91 @@ paths:
             schema:
               $ref: '#/components/schemas/Link'
         required: true
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ExtendedLink'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+  /v1/linktemplates/query/for/{conceptName}/using/{linkName}:
+    get:
+      tags:
+      - LinkTemplates
+      description: Find all link templates that can be used to annotate a concept
+        by name and link name
+      operationId: findLinkTemplatesForConceptAndLinkName
+      parameters:
+      - name: conceptName
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: linkName
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ExtendedLink'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+  /v1/linktemplates/query/for/{conceptName}:
+    get:
+      tags:
+      - LinkTemplates
+      description: Find all link templates that can be used to annotate a concept
+        by name
+      operationId: findLinkTemplatesForConceptName
+      parameters:
+      - name: conceptName
+        in: path
+        required: true
+        schema:
+          type: string
       responses:
         '200':
           description: ''
@@ -1721,7 +1959,83 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ServerError'
+  /v1/linktemplates/count:
+    get:
+      tags:
+      - LinkTemplates
+      description: Count all link templates
+      operationId: countAllLinkTemplates
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Count'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
   /v1/linktemplates:
+    get:
+      tags:
+      - LinkTemplates
+      description: Find all link templates
+      operationId: findAllLinkTemplates
+      parameters:
+      - name: offset
+        in: query
+        description: Offset for paging
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: limit
+        in: query
+        description: Limit for paging
+        required: false
+        schema:
+          type: integer
+          format: int32
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Page_Seq_ExtendedLink'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
     post:
       tags:
       - LinkTemplates
@@ -2642,10 +2956,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ServerError'
-  /v1/reference/add/{id}/to/{concept}:
+  /v1/references/add/{id}/to/{concept}:
     put:
       tags:
-      - Reference
+      - References
       description: Add a reference to a concept
       operationId: addReferenceToConcept
       parameters:
@@ -2694,10 +3008,10 @@ paths:
       security:
       - {}
       - httpAuth1: []
-  /v1/reference/remove/{id}/from/{concept}:
+  /v1/references/remove/{id}/from/{concept}:
     put:
       tags:
-      - Reference
+      - References
       description: Remove a reference from a concept
       operationId: removeReferenceFromConcept
       parameters:
@@ -2746,10 +3060,10 @@ paths:
       security:
       - {}
       - httpAuth1: []
-  /v1/reference/query/citation:
+  /v1/references/query/citation:
     post:
       tags:
-      - Reference
+      - References
       description: Find references by citation glob
       operationId: findReferencesByCitationGlob
       parameters:
@@ -2779,9 +3093,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Reference'
+                $ref: '#/components/schemas/Page_Seq_Reference'
         '400':
           description: ''
           content:
@@ -2800,10 +3112,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ServerError'
-  /v1/reference/query/doi:
+  /v1/references/query/doi:
     post:
       tags:
-      - Reference
+      - References
       description: Find a reference by DOI
       operationId: findReferenceByDoi
       requestBody:
@@ -2837,10 +3149,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ServerError'
-  /v1/reference/{id}:
+  /v1/references/{id}:
     get:
       tags:
-      - Reference
+      - References
       description: Find a reference by its ID
       operationId: findReferenceById
       parameters:
@@ -2877,7 +3189,7 @@ paths:
                 $ref: '#/components/schemas/ServerError'
     put:
       tags:
-      - Reference
+      - References
       description: Update a reference
       operationId: updateReference
       parameters:
@@ -2929,7 +3241,7 @@ paths:
       - httpAuth1: []
     delete:
       tags:
-      - Reference
+      - References
       description: Delete a reference
       operationId: deleteReference
       parameters:
@@ -2973,10 +3285,10 @@ paths:
       security:
       - {}
       - httpAuth1: []
-  /v1/reference:
+  /v1/references:
     get:
       tags:
-      - Reference
+      - References
       description: Find all references
       operationId: findAllReferences
       parameters:
@@ -3000,9 +3312,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Reference'
+                $ref: '#/components/schemas/Page_Seq_Reference'
         '400':
           description: ''
           content:
@@ -3023,7 +3333,7 @@ paths:
                 $ref: '#/components/schemas/ServerError'
     post:
       tags:
-      - Reference
+      - References
       description: Create a new reference
       operationId: createReference
       requestBody:
@@ -3508,6 +3818,8 @@ components:
         id:
           type: integer
           format: int64
+        lastUpdated:
+          type: string
     HealthStatus:
       title: HealthStatus
       type: object
@@ -3634,6 +3946,8 @@ components:
         id:
           type: integer
           format: int64
+        lastUpdated:
+          type: string
     MediaCreate:
       title: MediaCreate
       type: object
@@ -3690,6 +4004,40 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ExtendedHistory'
+        limit:
+          type: integer
+          format: int32
+        offset:
+          type: integer
+          format: int32
+    Page_Seq_ExtendedLink:
+      title: Page_Seq_ExtendedLink
+      type: object
+      required:
+      - limit
+      - offset
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/ExtendedLink'
+        limit:
+          type: integer
+          format: int32
+        offset:
+          type: integer
+          format: int32
+    Page_Seq_Reference:
+      title: Page_Seq_Reference
+      type: object
+      required:
+      - limit
+      - offset
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/Reference'
         limit:
           type: integer
           format: int32
@@ -3861,6 +4209,8 @@ components:
         id:
           type: integer
           format: int64
+        lastUpdated:
+          type: string
     ReferenceQuery:
       title: ReferenceQuery
       type: object

@@ -34,6 +34,10 @@ public class Media implements AdditionalDataHolder, Parsable {
      */
     private Boolean isPrimary;
     /**
+     * The lastUpdated property
+     */
+    private String lastUpdated;
+    /**
      * The mimeType property
      */
     private String mimeType;
@@ -95,12 +99,13 @@ public class Media implements AdditionalDataHolder, Parsable {
      */
     @jakarta.annotation.Nonnull
     public Map<String, java.util.function.Consumer<ParseNode>> getFieldDeserializers() {
-        final HashMap<String, java.util.function.Consumer<ParseNode>> deserializerMap = new HashMap<String, java.util.function.Consumer<ParseNode>>(7);
+        final HashMap<String, java.util.function.Consumer<ParseNode>> deserializerMap = new HashMap<String, java.util.function.Consumer<ParseNode>>(8);
         deserializerMap.put("caption", (n) -> { this.setCaption(n.getStringValue()); });
         deserializerMap.put("conceptName", (n) -> { this.setConceptName(n.getStringValue()); });
         deserializerMap.put("credit", (n) -> { this.setCredit(n.getStringValue()); });
         deserializerMap.put("id", (n) -> { this.setId(n.getLongValue()); });
         deserializerMap.put("isPrimary", (n) -> { this.setIsPrimary(n.getBooleanValue()); });
+        deserializerMap.put("lastUpdated", (n) -> { this.setLastUpdated(n.getStringValue()); });
         deserializerMap.put("mimeType", (n) -> { this.setMimeType(n.getStringValue()); });
         deserializerMap.put("url", (n) -> { this.setUrl(n.getStringValue()); });
         return deserializerMap;
@@ -120,6 +125,14 @@ public class Media implements AdditionalDataHolder, Parsable {
     @jakarta.annotation.Nullable
     public Boolean getIsPrimary() {
         return this.isPrimary;
+    }
+    /**
+     * Gets the lastUpdated property value. The lastUpdated property
+     * @return a {@link String}
+     */
+    @jakarta.annotation.Nullable
+    public String getLastUpdated() {
+        return this.lastUpdated;
     }
     /**
      * Gets the mimeType property value. The mimeType property
@@ -148,6 +161,7 @@ public class Media implements AdditionalDataHolder, Parsable {
         writer.writeStringValue("credit", this.getCredit());
         writer.writeLongValue("id", this.getId());
         writer.writeBooleanValue("isPrimary", this.getIsPrimary());
+        writer.writeStringValue("lastUpdated", this.getLastUpdated());
         writer.writeStringValue("mimeType", this.getMimeType());
         writer.writeStringValue("url", this.getUrl());
         writer.writeAdditionalData(this.getAdditionalData());
@@ -193,6 +207,13 @@ public class Media implements AdditionalDataHolder, Parsable {
      */
     public void setIsPrimary(@jakarta.annotation.Nullable final Boolean value) {
         this.isPrimary = value;
+    }
+    /**
+     * Sets the lastUpdated property value. The lastUpdated property
+     * @param value Value to set for the lastUpdated property.
+     */
+    public void setLastUpdated(@jakarta.annotation.Nullable final String value) {
+        this.lastUpdated = value;
     }
     /**
      * Sets the mimeType property value. The mimeType property

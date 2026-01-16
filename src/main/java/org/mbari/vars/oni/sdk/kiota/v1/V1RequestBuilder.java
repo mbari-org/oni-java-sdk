@@ -16,7 +16,7 @@ import org.mbari.vars.oni.sdk.kiota.v1.names.NamesRequestBuilder;
 import org.mbari.vars.oni.sdk.kiota.v1.phylogeny.PhylogenyRequestBuilder;
 import org.mbari.vars.oni.sdk.kiota.v1.prefs.PrefsRequestBuilder;
 import org.mbari.vars.oni.sdk.kiota.v1.raw.RawRequestBuilder;
-import org.mbari.vars.oni.sdk.kiota.v1.reference.ReferenceRequestBuilder;
+import org.mbari.vars.oni.sdk.kiota.v1.references.ReferencesRequestBuilder;
 import org.mbari.vars.oni.sdk.kiota.v1.users.UsersRequestBuilder;
 /**
  * Builds and executes requests for operations under /v1
@@ -120,12 +120,12 @@ public class V1RequestBuilder extends BaseRequestBuilder {
         return new RawRequestBuilder(pathParameters, requestAdapter);
     }
     /**
-     * The reference property
-     * @return a {@link ReferenceRequestBuilder}
+     * The references property
+     * @return a {@link ReferencesRequestBuilder}
      */
     @jakarta.annotation.Nonnull
-    public ReferenceRequestBuilder reference() {
-        return new ReferenceRequestBuilder(pathParameters, requestAdapter);
+    public ReferencesRequestBuilder references() {
+        return new ReferencesRequestBuilder(pathParameters, requestAdapter);
     }
     /**
      * The users property

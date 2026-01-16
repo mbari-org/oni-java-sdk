@@ -69,7 +69,7 @@ public class OniAccessTokenProvider implements AccessTokenProvider {
         var request = new Request.Builder()
                 .post(RequestBody.create(new byte[0]))
                 .url(uri.toURL())
-                .addHeader("Authorization", "ApiKey " + apiKey)
+                .addHeader("Authorization", "APIKEY " + apiKey)
                 .build();
         log.log(System.Logger.Level.DEBUG, "Requesting token from " + uri);
         try (var response = client.newCall(request).execute()) {

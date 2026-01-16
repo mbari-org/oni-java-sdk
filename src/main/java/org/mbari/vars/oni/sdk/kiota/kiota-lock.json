@@ -1,8 +1,8 @@
 {
-  "descriptionHash": "E6F7A9A242649BB491B33A0019F62154441B7EA986AD312078232FAFFD8FA3521ABF305F4A04AB31BABC19B0640C5DC1B47EE0C5753BCA8E0282F998C2591481",
+  "descriptionHash": "297FBFDBBAE714D1352B3BB3DA3D95866052BF05B28B5A64651E4D875D1738E6F3FE315D735FBD10C9A8B18DF6CFAE9A1C2A19B046D65D5219AB3A77F48CC347",
   "descriptionLocation": "../../../../../../../resources/docs.yaml",
   "lockFileVersion": "1.0.0",
-  "kiotaVersion": "1.25.1",
+  "kiotaVersion": "1.28.0",
   "clientClassName": "Oni",
   "typeAccessModifier": "Public",
   "clientNamespaceName": "org.mbari.vars.oni.sdk.kiota",
