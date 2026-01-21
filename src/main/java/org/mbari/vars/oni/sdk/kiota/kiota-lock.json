@@ -1,3 +1,22 @@
+/*-
+ * #%L
+ * org.mbari.vars:oni-java-sdk
+ * %%
+ * Copyright (C) 2025 - 2026 Monterey Bay Aquarium Research Institute
+ * %%
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * #L%
+ */
 {
   "descriptionHash": "2F31875781BBB1B75A7087FDDF33EB0233124B0A36C0DA24798C3469DE31325F05232757233889CD2DA0E72914F5AB82A780E6A958C34F9E495944A7C67FA339",
   "descriptionLocation": "../../../../../../../resources/docs.yaml",

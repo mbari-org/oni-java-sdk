@@ -11,6 +11,10 @@
   <name>${project.groupId}:${project.artifactId}</name>
   <description>Java SDK for the Oni microservice</description>
   <url>https://github.com/mbari-org/oni-java-sdk</url>
+  <inceptionYear>2025</inceptionYear>
+  <organization>
+    <name>Monterey Bay Aquarium Research Institute</name>
+  </organization>
 
   <licenses>
     <license>
@@ -299,6 +303,32 @@
               <goal>integration-test</goal>
               <goal>verify</goal>
             </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>license-maven-plugin</artifactId>
+        <version>2.7.1</version>
+        <configuration>
+          <verbose>false</verbose>
+          <addSvnKeyWords>false</addSvnKeyWords>
+          <licenseName>apache_v2</licenseName>
+        </configuration>
+        <executions>
+          <execution>
+            <id>first</id>
+            <goals>
+              <goal>update-file-header</goal>
+            </goals>
+            <phase>process-sources</phase>
+            <configuration>
+              <roots>
+                <root>src/main/java</root>
+                <root>src/test</root>
+              </roots>
+            </configuration>
           </execution>
         </executions>
       </plugin>
