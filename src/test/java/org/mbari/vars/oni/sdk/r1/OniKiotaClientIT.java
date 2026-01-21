@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.net.URI;
 
 import org.junit.jupiter.api.Test;
-import org.mbari.vars.oni.etc.Strings;
+import org.mbari.vars.oni.sdk.etc.jdk.Strings;
 import org.mbari.vars.oni.sdk.r1.models.PreferenceNode;
 
 public class OniKiotaClientIT {

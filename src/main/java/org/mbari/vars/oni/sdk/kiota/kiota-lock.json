@@ -18,10 +18,10 @@
  * #L%
  */
 {
-  "descriptionHash": "2F31875781BBB1B75A7087FDDF33EB0233124B0A36C0DA24798C3469DE31325F05232757233889CD2DA0E72914F5AB82A780E6A958C34F9E495944A7C67FA339",
+  "descriptionHash": "297FBFDBBAE714D1352B3BB3DA3D95866052BF05B28B5A64651E4D875D1738E6F3FE315D735FBD10C9A8B18DF6CFAE9A1C2A19B046D65D5219AB3A77F48CC347",
   "descriptionLocation": "../../../../../../../resources/docs.yaml",
   "lockFileVersion": "1.0.0",
-  "kiotaVersion": "1.29.0",
+  "kiotaVersion": "1.28.0",
   "clientClassName": "Oni",
   "typeAccessModifier": "Public",
   "clientNamespaceName": "org.mbari.vars.oni.sdk.kiota",
