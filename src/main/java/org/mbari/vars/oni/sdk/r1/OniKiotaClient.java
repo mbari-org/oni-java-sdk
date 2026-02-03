@@ -27,6 +27,7 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.function.Supplier;
 
 import org.mbari.vars.oni.sdk.OniFactory;
 import org.mbari.vars.oni.sdk.kiota.Oni;
@@ -63,149 +64,95 @@ public class OniKiotaClient implements ConceptService, UserService, PreferencesS
 
     @Override
     public CompletableFuture<Concept> findRoot() {
-        return CompletableFuture.supplyAsync(() -> {
+        return findOneOrNull(() -> {
             var reponse = oni.v1()
                     .concept()
                     .query()
                     .root()
                     .get();
             return Concept.fromKiota(reponse);
-        }, executor);
+        });
     }
 
     @Override
     public CompletableFuture<Optional<ConceptDetails>> findDetails(String name) {
-        return CompletableFuture.supplyAsync(() -> {
-            var response = oni.v1()
-                    .concept()
-                    .byName(name)
-                    .get();
-            if (response == null) {
-                return Optional.empty();
-            }
-            return Optional.of(ConceptDetails.fromKiota(response));
-        }, executor);
+        return findOne(() -> oni.v1()
+                .concept()
+                .byName(name)
+                .get()).thenApply(opt -> opt.map(ConceptDetails::fromKiota));
     }
 
     @Override
     public CompletableFuture<ConceptDetails> findRootDetails() {
-        return CompletableFuture.supplyAsync(() -> {
-            var response = oni.v1()
-                    .concept()
-                    .query()
-                    .root()
-                    .get();
-            if (response == null) {
-                return null;
-            }
-            return ConceptDetails.fromKiota(response);
-        }, executor);
+        return findOneOrNull(() -> oni.v1()
+                .concept()
+                .query()
+                .root()
+                .get()).thenApply(ConceptDetails::fromKiota);
     }
 
     @Override
     public CompletableFuture<Optional<Concept>> findParent(String name) {
-        return CompletableFuture.supplyAsync(() -> {
-            var response = oni.v1()
-                    .concept()
-                    .byName(name)
-                    .get();
-            if (response == null) {
-                return Optional.empty();
-            }
-            return Optional.of(Concept.fromKiota(response));
-        }, executor);
+        return findOne(() -> oni.v1()
+                .concept()
+                .parent()
+                .byName(name)
+                .get()).thenApply(opt -> opt.map(Concept::fromKiota));
     }
-
 
     @Override
     public CompletableFuture<List<String>> findAllNames() {
-        return CompletableFuture.supplyAsync(() -> {
-            var response = oni.v1()
-                    .concept()
-                    .get();
-            if (response == null) {
-                return List.of();
-            }
-            return response;
-        }, executor);
+        return findMany(() -> oni.v1()
+                .concept()
+                .get());
     }
 
     @Override
     public CompletableFuture<List<ConceptAssociationTemplate>> findAllTemplates() {
-        return CompletableFuture.supplyAsync(() -> {
-            var response = oni.v1()
-                    .links()
-                    .get();
-            if (response == null) {
-                return List.of();
-            }
-            return response.stream()
-                    .map(ConceptAssociationTemplate::fromKiota)
-                    .toList();
-        }, executor);
+        return findMany(() -> oni.v1()
+                .links()
+                .get()).thenApply(list -> list.stream()
+                        .map(ConceptAssociationTemplate::fromKiota)
+                        .toList());
     }
 
     @Override
     public CompletableFuture<List<ConceptAssociationTemplate>> findTemplates(String name) {
-        return CompletableFuture.supplyAsync(() -> {
-            var response = oni.v1()
-                    .links()
-                    .byName(name)
-                    .get();
-            if (response == null) {
-                return List.of();
-            }
-            return response.stream()
-                    .map(ConceptAssociationTemplate::fromKiota)
-                    .toList();
-        }, executor);
+        return findMany(() -> oni.v1()
+                .links()
+                .byName(name)
+                .get()).thenApply(list -> list.stream()
+                        .map(ConceptAssociationTemplate::fromKiota)
+                        .toList());
     }
 
     @Override
     public CompletableFuture<List<ConceptAssociationTemplate>> findTemplates(String name, String linkname) {
-        return CompletableFuture.supplyAsync(() -> {
-            var response = oni.v1()
-                    .links()
-                    .byName(name)
-                    .using()
-                    .byLinkName(linkname)
-                    .get();
-            if (response == null) {
-                return List.of();
-            }
-            return response.stream()
-                    .map(ConceptAssociationTemplate::fromKiota)
-                    .toList();
-        }, executor);
+        return findMany(() -> oni.v1()
+                .links()
+                .byName(name)
+                .using()
+                .byLinkName(linkname)
+                .get()).thenApply(list -> list.stream()
+                        .map(ConceptAssociationTemplate::fromKiota)
+                        .toList());
     }
 
     @Override
     public CompletableFuture<Optional<Concept>> findConcept(String name) {
-        return CompletableFuture.supplyAsync(() -> {
-            var response = oni.v1()
-                    .concept()
-                    .byName(name)
-                    .get();
-            if (response == null) {
-                return Optional.empty();
-            }
-            return Optional.of(Concept.fromKiota(response));
-        }, executor);
+        return findOne(() -> oni.v1()
+                .concept()
+                .byName(name)
+                .get()).thenApply(opt -> opt.map(Concept::fromKiota));
     }
 
     @Override
     public CompletableFuture<List<User>> findAllUsers() {
-        return CompletableFuture.supplyAsync(() -> {
-            var response = oni.v1()
-                    .users()
-                    .get();
-            if (response == null) {
-                return List.of();
-            }
-            return response.stream()
-                    .map(User::fromKiota)
-                    .toList();
-        }, executor);
+        return findMany(() -> oni.v1()
+                .users()
+                .get()).thenApply(list -> list.stream()
+                        .map(User::fromKiota)
+                        .toList());
     }
 
     @Override
@@ -275,201 +222,158 @@ public class OniKiotaClient implements ConceptService, UserService, PreferencesS
 
     @Override
     public CompletableFuture<List<PreferenceNode>> findByName(String nodeName) {
-        return CompletableFuture.supplyAsync(() -> {
-            var response = oni.v1()
-                    .prefs()
-                    .get(requestConfiguration -> {
-                        requestConfiguration.queryParameters.name = nodeName;
-                    });
-            if (response == null) {
-                return List.of();
-            }
-            return response.stream()
-                    .map(PreferenceNode::fromKiota)
-                    .toList();
-        }, executor);
+        return findMany(() -> oni.v1()
+                .prefs()
+                .get(requestConfiguration -> {
+                    requestConfiguration.queryParameters.name = nodeName;
+                })).thenApply(list -> list.stream()
+                        .map(PreferenceNode::fromKiota)
+                        .toList());
     }
 
     @Override
     public CompletableFuture<List<PreferenceNode>> findByNameLike(String prefix) {
-        return CompletableFuture.supplyAsync(() -> {
-            var response = oni.v1()
-                    .prefs()
-                    .startswith()
-                    .get(requestConfiguration -> {
-                        requestConfiguration.queryParameters.prefix = prefix;
-                    });
-            if (response == null) {
-                return List.of();
-            }
-            return response.stream()
-                    .map(PreferenceNode::fromKiota)
-                    .toList();
-        }, executor);
+        return findMany(() -> oni.v1()
+                .prefs()
+                .startswith()
+                .get(requestConfiguration -> {
+                    requestConfiguration.queryParameters.prefix = prefix;
+                })).thenApply(list -> list.stream()
+                        .map(PreferenceNode::fromKiota)
+                        .toList());
     }
 
     @Override
     public CompletableFuture<Optional<PreferenceNode>> findByNameAndKey(String nodeName, String key) {
-        return CompletableFuture.supplyAsync(() -> {
-            var response = oni.v1()
-                    .prefs()
-                    .get(requestConfiguration -> {
-                        requestConfiguration.queryParameters.name = nodeName;
-                        requestConfiguration.queryParameters.key = key;
-                    });
-            if (response == null) {
-                return Optional.empty();
-            }
-            return response.stream()
-                    .map(PreferenceNode::fromKiota)
-                    .findFirst();
-        }, executor);
+        return findMany(() -> oni.v1()
+                .prefs()
+                .get(requestConfiguration -> {
+                    requestConfiguration.queryParameters.name = nodeName;
+                    requestConfiguration.queryParameters.key = key;
+                })).thenApply(list -> list.stream()
+                        .map(PreferenceNode::fromKiota)
+                        .findFirst());
     }
-
 
     @Override
     public CompletableFuture<List<ExtendedLink>> findLinkRealizationsByConceptName(String conceptId) {
-        return CompletableFuture.supplyAsync(() ->
-                        oni.v1()
-                                .linkrealizations()
-                                .concept()
-                                .byConceptName(conceptId)
-                                .get()
+        return findMany(() -> oni.v1()
+                .linkrealizations()
+                .concept()
+                .byConceptName(conceptId)
+                .get()
 
-                , executor);
+        );
     }
 
     @Override
     public CompletableFuture<List<ExtendedLink>> findLinkRealizationsByLinkName(String linkName) {
-        return CompletableFuture.supplyAsync(() ->
-                        oni.v1()
-                                .linkrealizations()
-                                .query()
-                                .linkname()
-                                .byLinkName(linkName)
-                                .get()
-                , executor);
+        return findMany(() -> oni.v1()
+                .linkrealizations()
+                .query()
+                .linkname()
+                .byLinkName(linkName)
+                .get());
     }
 
     @Override
     public CompletableFuture<List<ExtendedLink>> findLinkRealizationsByPrototype(Link link) {
-        return CompletableFuture.supplyAsync(() ->
-                        oni.v1()
-                                .linkrealizations()
-                                .prototype()
-                                .post(link)
-                , executor);
+        return findMany(() -> oni.v1()
+                .linkrealizations()
+                .prototype()
+                .post(link));
     }
 
     @Override
     public CompletableFuture<Count> countLinkRealizations() {
-        return CompletableFuture.supplyAsync(() ->
-                        oni.v1()
-                                .linkrealizations()
-                                .count()
-                                .get()
-                , executor);
+        return findOneOrNull(() -> oni.v1()
+                .linkrealizations()
+                .count()
+                .get());
     }
 
     @Override
     public CompletableFuture<PageSeqExtendedLink> listAllLinkRealizations(int limit, int offset) {
-        return CompletableFuture.supplyAsync(() ->
-                        oni.v1()
-                                .linkrealizations()
-                                .get(requestConfiguration -> {
-                                    requestConfiguration.queryParameters.limit = limit;
-                                    requestConfiguration.queryParameters.offset = offset;
-                                })
-                , executor);
-    }
+        return CompletableFuture.supplyAsync(() -> oni.v1()
+                .linkrealizations()
+                .get(requestConfiguration -> {
+                    requestConfiguration.queryParameters.limit = limit;
+                    requestConfiguration.queryParameters.offset = offset;
+                }), executor);
+        }
 
     @Override
     public CompletableFuture<ExtendedLink> createLinkRealization(LinkCreate linkCreate) {
-        return CompletableFuture.supplyAsync(() ->
-                        oni.v1()
-                                .linkrealizations()
-                                .post(linkCreate)
+        return CompletableFuture.supplyAsync(() -> oni.v1()
+                .linkrealizations()
+                .post(linkCreate)
 
                 , executor);
     }
 
     @Override
     public CompletableFuture<ExtendedLink> updateLinkRealization(Long id, LinkUpdate linkUpdate) {
-        return CompletableFuture.supplyAsync(() ->
-                        oni.v1()
-                                .linkrealizations()
-                                .byId(id)
-                                .put(linkUpdate)
-
-                , executor);
+        return CompletableFuture.supplyAsync(() -> oni.v1()
+                .linkrealizations()
+                .byId(id)
+                .put(linkUpdate), executor);
     }
 
     @Override
     public CompletableFuture<LinkrealizationsDeleteResponse> deleteLinkRealization(Long linkId) {
-        return CompletableFuture.supplyAsync(() ->
-                        oni.v1()
-                                .linkrealizations()
-                                .byId(linkId)
-                                .delete()
-                , executor);
+        return CompletableFuture.supplyAsync(() -> oni.v1()
+                .linkrealizations()
+                .byId(linkId)
+                .delete(), executor);
     }
 
     @Override
     public CompletableFuture<ExtendedLink> findLinkRealizationById(Long linkId) {
-        return CompletableFuture.supplyAsync(() ->
-                        oni.v1()
-                                .linkrealizations()
-                                .byId(linkId)
-                                .get()
-
-                , executor);
+        return findOneOrNull(() -> oni.v1()
+                .linkrealizations()
+                .byId(linkId)
+                .get() );
     }
 
     @Override
     public CompletableFuture<Count> countLinkTemplates() {
-        return CompletableFuture.supplyAsync(() ->
-                        oni.v1()
-                                .linktemplates()
-                                .count()
-                                .get()
-                , executor);
+        return CompletableFuture.supplyAsync(() -> oni.v1()
+                .linktemplates()
+                .count()
+                .get(), executor);
     }
 
     @Override
     public CompletableFuture<PageSeqExtendedLink> listAllLinkTemplates(int limit, int offset) {
-        return CompletableFuture.supplyAsync(() ->
-                oni.v1()
-                        .linktemplates()
-                        .get(requestConfiguration -> {
-                            requestConfiguration.queryParameters.limit = limit;
-                            requestConfiguration.queryParameters.offset = offset;
-                        }), executor);
+        return CompletableFuture.supplyAsync(() -> oni.v1()
+                .linktemplates()
+                .get(requestConfiguration -> {
+                    requestConfiguration.queryParameters.limit = limit;
+                    requestConfiguration.queryParameters.offset = offset;
+                }), executor);
     }
 
     @Override
     public CompletableFuture<ExtendedLink> createLinkTemplate(LinkCreate linkCreate) {
-        return CompletableFuture.supplyAsync(() ->
-                oni.v1()
-                        .linktemplates()
-                        .post(linkCreate), executor);
+        return CompletableFuture.supplyAsync(() -> oni.v1()
+                .linktemplates()
+                .post(linkCreate), executor);
     }
 
     @Override
     public CompletableFuture<ExtendedLink> updateLinkTemplate(Long id, LinkUpdate linkUpdate) {
-        return CompletableFuture.supplyAsync(() ->
-                oni.v1()
-                        .linktemplates()
-                        .byId(id)
-                        .put(linkUpdate), executor);
+        return CompletableFuture.supplyAsync(() -> oni.v1()
+                .linktemplates()
+                .byId(id)
+                .put(linkUpdate), executor);
     }
 
     @Override
     public CompletableFuture<LinktemplatesDeleteResponse> deleteLinkTemplate(Long linkId) {
-        return CompletableFuture.supplyAsync(() ->
-                oni.v1()
-                        .linktemplates()
-                        .byId(linkId)
-                        .delete(), executor);
+        return CompletableFuture.supplyAsync(() -> oni.v1()
+                .linktemplates()
+                .byId(linkId)
+                .delete(), executor);
     }
 
     @Override
@@ -477,19 +381,19 @@ public class OniKiotaClient implements ConceptService, UserService, PreferencesS
         return CompletableFuture.supplyAsync(() -> {
             try {
                 var response = oni.v1()
-                    .users()
-                    .byName(username)
-                            .get();
-                    if (response == null) {
-                        return Optional.empty();
-                    }
+                        .users()
+                        .byName(username)
+                        .get();
+                if (response == null) {
+                    return Optional.empty();
+                }
                 return Optional.of(User.fromKiota(response));
             } catch (Exception e) {
                 e.printStackTrace();
                 return Optional.empty();
             }
         }, executor);
-        
+
     }
 
     @Override
@@ -501,9 +405,9 @@ public class OniKiotaClient implements ConceptService, UserService, PreferencesS
                 kiotaUser.setPassword(newPassword);
                 try {
                     var response = oni.v1()
-                        .users()
-                        .byName(user)
-                        .put(kiotaUser);
+                            .users()
+                            .byName(user)
+                            .put(kiotaUser);
                     return Optional.of(User.fromKiota(response));
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -511,6 +415,67 @@ public class OniKiotaClient implements ConceptService, UserService, PreferencesS
                 }
             }
             return Optional.empty();
+        }, executor);
+    }
+
+    /**
+     * Helper method that executes a supplier and wraps the result in an Optional.
+     * <p>
+     * Handles {@link NotFound} exceptions by returning an empty Optional instead
+     * of propagating the exception. Executes asynchronously using virtual threads.
+     * </p>
+     *
+     * @param <A>      the type of the result
+     * @param supplier the supplier to execute
+     * @return a CompletableFuture containing an Optional with the result, or empty
+     *         if not found
+     */
+    private <A> CompletableFuture<Optional<A>> findOne(Supplier<A> supplier) {
+        return findOneOrNull(supplier).thenApply(Optional::ofNullable);
+    }
+
+    /**
+     * Helper method that executes a supplier and returns null on NotFound.
+     * <p>
+     * Handles {@link NotFound} exceptions by returning null instead of propagating
+     * the exception. This simplifies error handling for callers who expect nullable
+     * results. Executes asynchronously using virtual threads.
+     * </p>
+     *
+     * @param <A>      the type of the result
+     * @param supplier the supplier to execute
+     * @return a CompletableFuture containing the result, or null if not found
+     */
+    private <A> CompletableFuture<A> findOneOrNull(Supplier<A> supplier) {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                return supplier.get();
+            } catch (NotFound e) {
+                return null;
+            }
+        }, executor);
+    }
+
+    /**
+     * Helper method that executes a supplier and returns an empty list on NotFound.
+     * <p>
+     * Handles {@link NotFound} exceptions by returning an empty list instead of
+     * propagating the exception. This simplifies error handling for callers who
+     * expect list results. Executes asynchronously using virtual threads.
+     * </p>
+     *
+     * @param <A>      the type of elements in the result list
+     * @param supplier the supplier to execute
+     * @return a CompletableFuture containing the result list, or an empty list if
+     *         not found
+     */
+    private <A> CompletableFuture<List<A>> findMany(Supplier<List<A>> supplier) {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                return supplier.get();
+            } catch (NotFound e) {
+                return List.of();
+            }
         }, executor);
     }
 }
