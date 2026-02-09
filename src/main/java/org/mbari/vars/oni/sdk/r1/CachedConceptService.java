@@ -24,12 +24,15 @@ import com.github.benmanes.caffeine.cache.AsyncLoadingCache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 
-
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.mbari.vars.oni.sdk.r1.models.Concept;
 import org.mbari.vars.oni.sdk.r1.models.ConceptAssociationTemplate;
@@ -50,6 +53,11 @@ public class CachedConceptService implements ConceptService {
     private final AsyncLoadingCache<String, Optional<Concept>> conceptCache;
     private final AsyncLoadingCache<String, List<ConceptAssociationTemplate>> templateCache;
     private final AsyncLoadingCache<String, Optional<Concept>> phylogenyDownCache;
+
+    private final ReentrantLock rootLock = new ReentrantLock();
+    private final ReentrantLock allNamesLock = new ReentrantLock();
+
+    private static final Logger log = System.getLogger(CachedConceptService.class.getName());
 
 
     public CachedConceptService(ConceptService conceptService) {
@@ -81,39 +89,72 @@ public class CachedConceptService implements ConceptService {
 
     private CompletableFuture<Optional<Concept>> loadConcept(String name) {
         return conceptService.findConcept(name)
-                .thenApply(opt ->  {
-                    opt.ifPresent(this::loadConceptDetails);
-                    return opt;
-                });
+                .thenApply(this::cacheConcept);
     }
 
-    private CompletableFuture<Optional<Concept>> loadConceptDetails(Concept c) {
-        return conceptService.findDetails(c.getName()).thenApply(opt -> {
-            opt.ifPresent(cd -> {
-                c.setConceptDetails(cd);
-                for (String name : cd.getAlternateNames()) {
-                    conceptCache.synchronous().put(name, Optional.of(c));
-                }
-            });
-            return Optional.of(c);
+    private Optional<Concept> cacheConcept(Optional<Concept> concept) {
+        return concept.map(c -> {
+            conceptCache.synchronous().put(c.getName(), concept);
+            for (String altName : c.getAlternativeNames()) {
+                conceptCache.synchronous().put(altName, concept);
+            }
+            return c;
         });
     }
 
+
     @Override
     public CompletableFuture<Concept> findRoot() {
-        if (rootName == null) {
+        rootLock.lock();
+        try {   
+            if (rootName == null) {
 
-            return conceptService.findRoot()
-                    .thenApply(c -> {
-                        rootName = c.getName();
-                        conceptCache.put(rootName, loadConceptDetails(c));
-                        cacheChildren(c);
-                        return c;
-                    });
+                // Does the look twice. It is known. 
+                // Get the root name, then get it again to cache it.
+                return conceptService.findRoot()
+                        .thenApply(c -> cacheConcept(Optional.ofNullable(c)))
+                        .thenCompose(root -> {
+                            if (root.isEmpty()) {
+                                return CompletableFuture.failedFuture(new RuntimeException("No root was found in the kB"));
+                            }
+                            else {
+                                var r = root.get();
+                                return findPhylogenyDown(r.getName())
+                                    .thenApply(opt -> {
+                                        if (opt.isEmpty()) {
+                                            log.log(Level.WARNING,"Failed to load KB tree");
+                                        }
+                                        else {
+                                            var tree = opt.get();
+                                            rootName = tree.getName();
+                                            cacheChildrenPhylogeny(tree);
+
+                                        }
+                                        return r;
+                                    });
+
+                            }
+                        });
+            }
+            else {
+                return conceptCache.get(rootName)
+                        .thenApply(Optional::get);
+            }
         }
-        else {
-            return conceptCache.get(rootName)
-                    .thenApply(Optional::get);
+        finally {
+            rootLock.unlock();
+        }
+    }
+
+    private void cacheChildrenPhylogeny(Concept concept) {
+        if (concept != null) {
+            concept.getChildren().forEach(c -> {
+                var opt = Optional.of(c);
+                phylogenyDownCache.synchronous().put(c.getName(), opt);
+                c.getAlternativeNames().forEach(altName -> phylogenyDownCache.synchronous().put(altName, opt));
+                conceptCache.synchronous().put(c.getName(), opt);
+                cacheChildrenPhylogeny(c);
+            });
         }
     }
 
@@ -122,66 +163,38 @@ public class CachedConceptService implements ConceptService {
         return conceptService.findParent(name);
     }
 
-    private void cacheChildren(Concept concept) {
-        concept.getChildren()
-                .forEach(child -> {
-                    Optional<Concept> opt = Optional.of(child);
-                    LoadingCache<String, Optional<Concept>> syncCache = conceptCache.synchronous();
-                    syncCache.put(child.getName(), opt);
-                    child.getAlternativeNames()
-                            .forEach(alternateName -> syncCache.put(alternateName, opt));
-                    cacheChildren(child);
-                });
-    }
 
     @Override
     public CompletableFuture<Optional<ConceptDetails>> findDetails(String name) {
-        CompletableFuture<Optional<ConceptDetails>> f = new CompletableFuture<>();
-        conceptCache.get(name)
-                .thenAccept(opt -> {
-                    if (opt.isPresent()) {
-                        Concept concept = opt.get();
-                        if (concept.getConceptDetails() == null) {
-                            loadConceptDetails(concept)
-                                    .thenAccept(opt2 -> {
-                                        if (opt2.isPresent()) {
-                                            f.complete(Optional.ofNullable(opt2.get().getConceptDetails()));
-                                        }
-                                        else {
-                                            f.complete(Optional.empty());
-                                        }
-                                    });
-                        } else {
-                            f.complete(Optional.of(concept.getConceptDetails()));
-                        }
-                    }
-                    else {
-                        f.complete(Optional.empty());
-                    }
-                });
-        return f;
+        return conceptCache.get(name)
+                .thenApply(opt -> opt.map(c -> c.getConceptDetails()));
     }
 
     @Override
     public CompletableFuture<ConceptDetails> findRootDetails() {
-        if (rootName == null) {
-            CompletableFuture<ConceptDetails> f = new CompletableFuture<>();
-            f.completeExceptionally(new RuntimeException("Root has not yet been loadedd"));
-            return f;
-        }
-        else {
-            return findDetails(rootName).thenApply(Optional::get);
-        }
+        return findRoot()
+            .thenApply(c -> c.getConceptDetails());
     }
 
     @Override
     public CompletableFuture<List<String>> findAllNames() {
         if (allNames.isEmpty()) {
-            return conceptService.findAllNames()
-                    .thenApply(ns -> {
-                        allNames = Collections.unmodifiableList(ns);
-                        return allNames;
-                    });
+            try {
+                allNamesLock.lock();
+                if (allNames.isEmpty()) {
+                    return conceptService.findAllNames()
+                            .thenApply(ns -> {
+                                allNames = Collections.unmodifiableList(ns);
+                                return allNames;
+                            });
+                }
+                else {
+                    return CompletableFuture.completedFuture(allNames);
+                }
+            }
+            finally {
+                allNamesLock.unlock();
+            }
         }
         else {
             return CompletableFuture.completedFuture(allNames);

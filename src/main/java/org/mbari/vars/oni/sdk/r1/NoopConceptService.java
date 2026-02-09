@@ -125,13 +125,19 @@ public class NoopConceptService implements ConceptService, UserService, Preferen
     @Override
     public CompletableFuture<Optional<User>> findByUsername(String username) {
         // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'findByUsername'");
+        return CompletableFuture.failedFuture(new UnsupportedOperationException("`findByUsername` is not implemented"));
     }
 
     @Override
     public CompletableFuture<Optional<User>> changePassword(String user, String oldPassword, String newPassword) {
         // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'changePassword'");
+        return CompletableFuture.failedFuture(new UnsupportedOperationException("`changePassword` is not implemented"));
+    }
+
+    @Override
+    public CompletableFuture<Optional<Concept>> findPhylogenyDown(String name) {
+        // TODO Auto-generated method stub
+        return CompletableFuture.failedFuture(new UnsupportedOperationException("`findPhylogenyDown` is not implemented"));
     }
 
     

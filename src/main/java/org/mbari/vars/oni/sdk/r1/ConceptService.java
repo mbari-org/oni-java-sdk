@@ -36,8 +36,8 @@ import org.mbari.vars.oni.sdk.r1.models.ConceptDetails;
 public interface ConceptService {
 
     /**
-     * Fetch all concepts and return the root node. You can walk the tree to find other nodes.
-     * @return
+     * Find the root concept
+     * @return The root concept
      */
     CompletableFuture<Concept> findRoot();
 
@@ -48,8 +48,17 @@ public interface ConceptService {
      */
     CompletableFuture<Optional<ConceptDetails>> findDetails(String name);
 
+    /**
+     * Find the details for the root concept
+     * @return The details for the root concept
+     */
     CompletableFuture<ConceptDetails> findRootDetails();
 
+    /**
+     * Find the parent of a concept. 
+     * @param name The name of the concept to find the parent of
+     * @return The parent of the concept, if it exists
+     */
     CompletableFuture<Optional<Concept>> findParent(String name);
 
     /**
@@ -58,18 +67,38 @@ public interface ConceptService {
      */
     CompletableFuture<List<String>> findAllNames();
 
+    /**
+     * Find all linkTemplates in the knowledgebase. These are used to create associations between concepts in annotation applications.
+     * @return A list of all linkTemplates
+     */
     CompletableFuture<List<ConceptAssociationTemplate>> findAllTemplates();
 
+    /**
+     * Finda linkTemplates that can be applied to a concept. These are used to create associations between concepts in annotation applications.
+     * @param name The name of the concept to find applicable linkTemplates for
+     * @return A list of linkTemplates that can be applied to the concept
+     */
     CompletableFuture<List<ConceptAssociationTemplate>> findTemplates(String name);
 
+    /**
+     * Find linkTemplates that can be applied to a concept via a specific link. These are used to create associations between concepts in annotation applications.
+     * @param name The name of the concept to find applicable linkTemplates for
+     * @param linkname The name of the link to find applicable linkTemplates for
+     * @return A list of linkTemplates that can be applied to the concept via the provided link
+     */
     CompletableFuture<List<ConceptAssociationTemplate>> findTemplates(String name, String linkname);
     /**
-     * Fetch a branch of the concept tree from the provided name on down
-     * @param name
-     * @return
+     * Fetch a concept (and it's metadata) by name. The name can be either the primary name or an alternate name.
+     * @param name The name of the concept to find
+     * @return The concept, if it exists
      */
     CompletableFuture<Optional<Concept>> findConcept(String name);
 
+    /**
+     * Find a branch of the concept tree from the provided name on down
+     * @param name The name of the concept to find the phylogeny for
+     * @return The concept and all of its descendants, if it exists
+     */
     CompletableFuture<Optional<Concept>> findPhylogenyDown(String name);
 
 
