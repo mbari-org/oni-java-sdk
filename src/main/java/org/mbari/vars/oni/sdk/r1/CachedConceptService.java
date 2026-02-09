@@ -49,7 +49,7 @@ public class CachedConceptService implements ConceptService {
 
     private final AsyncLoadingCache<String, Optional<Concept>> conceptCache;
     private final AsyncLoadingCache<String, List<ConceptAssociationTemplate>> templateCache;
-
+    private final AsyncLoadingCache<String, Optional<Concept>> phylogenyDownCache;
 
 
     public CachedConceptService(ConceptService conceptService) {
@@ -63,6 +63,11 @@ public class CachedConceptService implements ConceptService {
                 .expireAfterWrite(120, TimeUnit.MINUTES)
                 .maximumSize(20000)
                 .buildAsync((key, executor) -> conceptService.findTemplates(key));
+
+        phylogenyDownCache = Caffeine.newBuilder()
+                .expireAfterWrite(120, TimeUnit.MINUTES)
+                .maximumSize(20000)
+                .buildAsync((key, executor) -> conceptService.findPhylogenyDown(key));
         findRoot();
     }
 
@@ -71,12 +76,12 @@ public class CachedConceptService implements ConceptService {
         allNames = Collections.emptyList();
         conceptCache.synchronous().invalidateAll();
         templateCache.synchronous().invalidateAll();
+        phylogenyDownCache.synchronous().invalidateAll();
     }
 
     private CompletableFuture<Optional<Concept>> loadConcept(String name) {
         return conceptService.findConcept(name)
                 .thenApply(opt ->  {
-                    System.out.println("Loaded " + name);
                     opt.ifPresent(this::loadConceptDetails);
                     return opt;
                 });
@@ -201,6 +206,11 @@ public class CachedConceptService implements ConceptService {
     @Override
     public CompletableFuture<Optional<Concept>> findConcept(String name) {
         return conceptCache.get(name);
+    };
+
+    @Override
+    public CompletableFuture<Optional<Concept>> findPhylogenyDown(String name) {
+        return phylogenyDownCache.get(name);
     }
 
 }

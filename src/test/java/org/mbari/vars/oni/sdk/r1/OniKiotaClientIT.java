@@ -72,7 +72,7 @@ public class OniKiotaClientIT {
         assertNotNull(opt);
         assertTrue(opt.isPresent());
         var parent = opt.get();
-        assertEquals("Nanomia", parent.getName());
+        assertEquals("Agalmatidae", parent.getName());
     }
 
     @Test
@@ -189,6 +189,20 @@ public class OniKiotaClientIT {
         var opt = client.findByNameAndKey(prefNode.getName(), prefNode.getKey()).join();
         assertTrue(opt.isEmpty());
     }
+
+    @Test
+    public void testPhylogenyDown() {
+        var client = new OniKiotaClient(URI.create("https://gehenna.shore.mbari.org/kb"), "foo");
+        var opt = client.findPhylogenyDown("Nanomia").join();
+        assertTrue(opt.isPresent());
+        var concept = opt.get();
+        assertEquals("Nanomia", concept.getName());
+        assertTrue(concept.getChildren().size() > 0);
+        var child = concept.getChildren().get(0);
+        assertEquals("Nanomia bijuga", child.getName());
+
+    }
+
 
 
 

@@ -147,6 +147,15 @@ public class OniKiotaClient implements ConceptService, UserService, PreferencesS
     }
 
     @Override
+    public CompletableFuture<Optional<Concept>> findPhylogenyDown(String name) {
+        return findOne(() -> oni.v1()
+                .phylogeny()
+                .down()
+                .byName(name)
+                .get()).thenApply(opt -> opt.map(Concept::fromKiota));
+    }
+
+    @Override
     public CompletableFuture<List<User>> findAllUsers() {
         return findMany(() -> oni.v1()
                 .users()

@@ -70,5 +70,7 @@ public interface ConceptService {
      */
     CompletableFuture<Optional<Concept>> findConcept(String name);
 
+    CompletableFuture<Optional<Concept>> findPhylogenyDown(String name);
+
 
 }

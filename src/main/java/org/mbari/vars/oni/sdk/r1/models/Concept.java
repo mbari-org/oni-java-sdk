@@ -40,11 +40,13 @@ public class Concept {
     public Concept(String name, String rank, List<String> alternativeNames, List<Concept> children) {
         this.name = name;
         this.rank = rank;
-        this.alternativeNames = Collections.unmodifiableList(alternativeNames.stream()
+        List<String> altNames = Objects.requireNonNullElseGet(alternativeNames, Collections::emptyList);
+        this.alternativeNames = Collections.unmodifiableList(altNames.stream()
             .sorted(String.CASE_INSENSITIVE_ORDER)
             .collect(Collectors.toList()));
 
-        this.children = Collections.unmodifiableList(children.stream()
+        List<Concept> tmpChildren = Objects.requireNonNullElseGet(children, Collections::emptyList);
+        this.children = Collections.unmodifiableList(tmpChildren.stream()
                     .sorted((a, b) -> a.getName().compareToIgnoreCase(b.getName()))
                     .collect(Collectors.toList()));
     }
@@ -125,10 +127,16 @@ public class Concept {
     }
 
     public static Concept fromKiota(org.mbari.vars.oni.sdk.kiota.models.SerdeConcept kiotaConcept) {
-        List<Concept> children = kiotaConcept.getChildren()
-                .stream()
-                .map(Concept::fromKiota)
-                .collect(Collectors.toList());
+        List<SerdeConcept> kiotaChildren = kiotaConcept.getChildren();
+        List<Concept> children = kiotaChildren == null ? 
+                Collections.emptyList() : 
+                kiotaChildren.stream()
+                    .map(Concept::fromKiota)
+                    .collect(Collectors.toList());
+        // List<Concept> children = kiotaConcept.getChildren()
+        //         .stream()
+        //         .map(Concept::fromKiota)
+        //         .collect(Collectors.toList());
 
         return new Concept(kiotaConcept.getName(),
                 kiotaConcept.getRank(),
