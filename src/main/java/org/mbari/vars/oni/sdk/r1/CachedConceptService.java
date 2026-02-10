@@ -152,7 +152,6 @@ public class CachedConceptService implements ConceptService {
                 var opt = Optional.of(c);
                 phylogenyDownCache.synchronous().put(c.getName(), opt);
                 c.getAlternativeNames().forEach(altName -> phylogenyDownCache.synchronous().put(altName, opt));
-                conceptCache.synchronous().put(c.getName(), opt);
                 cacheChildrenPhylogeny(c);
             });
         }
