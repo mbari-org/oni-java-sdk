@@ -57,7 +57,7 @@ public class ApprovedRequestBuilder extends BaseRequestBuilder {
      * @param requestAdapter The request adapter to use to execute the requests.
      */
     public ApprovedRequestBuilder(@jakarta.annotation.Nonnull final HashMap<String, Object> pathParameters, @jakarta.annotation.Nonnull final RequestAdapter requestAdapter) {
-        super(requestAdapter, "{+baseurl}/v1/history/approved{?limit*,offset*}", pathParameters);
+        super(requestAdapter, "{+baseurl}/v1/history/approved{?limit*,offset*,sort*}", pathParameters);
     }
     /**
      * Instantiates a new {@link ApprovedRequestBuilder} and sets the default values.
@@ -65,7 +65,7 @@ public class ApprovedRequestBuilder extends BaseRequestBuilder {
      * @param requestAdapter The request adapter to use to execute the requests.
      */
     public ApprovedRequestBuilder(@jakarta.annotation.Nonnull final String rawUrl, @jakarta.annotation.Nonnull final RequestAdapter requestAdapter) {
-        super(requestAdapter, "{+baseurl}/v1/history/approved{?limit*,offset*}", rawUrl);
+        super(requestAdapter, "{+baseurl}/v1/history/approved{?limit*,offset*,sort*}", rawUrl);
     }
     /**
      * Get all approved change requests
@@ -141,6 +141,11 @@ public class ApprovedRequestBuilder extends BaseRequestBuilder {
         @jakarta.annotation.Nullable
         public Integer offset;
         /**
+         * Sort by field and optional direction (asc or desc), e.g. &apos;processedTimestamp,desc&apos; or &apos;concept&apos; (ascending). Common fields: creationTimestamp, creatorName, oldValue, newValue, concept, processedTimestamp, processorName. Defaults to creationTimestamp ascending. An unknown field returns 400
+         */
+        @jakarta.annotation.Nullable
+        public String sort;
+        /**
          * Extracts the query parameters into a map for the URI template parsing.
          * @return a {@link Map<String, Object>}
          */
@@ -149,6 +154,7 @@ public class ApprovedRequestBuilder extends BaseRequestBuilder {
             final Map<String, Object> allQueryParams = new HashMap();
             allQueryParams.put("limit", limit);
             allQueryParams.put("offset", offset);
+            allQueryParams.put("sort", sort);
             return allQueryParams;
         }
     }

@@ -27,7 +27,7 @@ import java.util.Objects;
 import org.mbari.vars.oni.sdk.kiota.v1.history.approve.ApproveRequestBuilder;
 import org.mbari.vars.oni.sdk.kiota.v1.history.approved.ApprovedRequestBuilder;
 import org.mbari.vars.oni.sdk.kiota.v1.history.concept.ConceptRequestBuilder;
-import org.mbari.vars.oni.sdk.kiota.v1.history.item.WithP1ItemRequestBuilder;
+import org.mbari.vars.oni.sdk.kiota.v1.history.item.HistoryItemRequestBuilder;
 import org.mbari.vars.oni.sdk.kiota.v1.history.pending.PendingRequestBuilder;
 import org.mbari.vars.oni.sdk.kiota.v1.history.reject.RejectRequestBuilder;
 /**
@@ -77,15 +77,15 @@ public class HistoryRequestBuilder extends BaseRequestBuilder {
     }
     /**
      * Gets an item from the org.mbari.vars.oni.sdk.kiota.v1.history.item collection
-     * @param p1 Unique identifier of the item
-     * @return a {@link WithP1ItemRequestBuilder}
+     * @param id Unique identifier of the item
+     * @return a {@link HistoryItemRequestBuilder}
      */
     @jakarta.annotation.Nonnull
-    public WithP1ItemRequestBuilder byP1(@jakarta.annotation.Nonnull final Long p1) {
-        Objects.requireNonNull(p1);
+    public HistoryItemRequestBuilder byId(@jakarta.annotation.Nonnull final Long id) {
+        Objects.requireNonNull(id);
         final HashMap<String, Object> urlTplParams = new HashMap<String, Object>(this.pathParameters);
-        urlTplParams.put("p1", p1);
-        return new WithP1ItemRequestBuilder(urlTplParams, requestAdapter);
+        urlTplParams.put("id", id);
+        return new HistoryItemRequestBuilder(urlTplParams, requestAdapter);
     }
     /**
      * Instantiates a new {@link HistoryRequestBuilder} and sets the default values.

@@ -33,6 +33,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import org.mbari.vars.oni.sdk.kiota.models.BadRequest;
+import org.mbari.vars.oni.sdk.kiota.models.Forbidden;
 import org.mbari.vars.oni.sdk.kiota.models.LinkRenameToConceptRequest;
 import org.mbari.vars.oni.sdk.kiota.models.LinkRenameToConceptResponse;
 import org.mbari.vars.oni.sdk.kiota.models.NotFound;
@@ -60,11 +61,12 @@ public class RenameRequestBuilder extends BaseRequestBuilder {
         super(requestAdapter, "{+baseurl}/v1/linktemplates/toconcept/rename", rawUrl);
     }
     /**
-     * Bulk rename all linkTemplate toConcepts
+     * Rename the toConcept of every link template from `old` to `new`. Requires an administrator or maintainer login.
      * @param body The request body
      * @return a {@link LinkRenameToConceptResponse}
      * @throws BadRequest When receiving a 400 status code
      * @throws Unauthorized When receiving a 401 status code
+     * @throws Forbidden When receiving a 403 status code
      * @throws NotFound When receiving a 404 status code
      * @throws ServerError When receiving a 500 status code
      */
@@ -73,12 +75,13 @@ public class RenameRequestBuilder extends BaseRequestBuilder {
         return put(body, null);
     }
     /**
-     * Bulk rename all linkTemplate toConcepts
+     * Rename the toConcept of every link template from `old` to `new`. Requires an administrator or maintainer login.
      * @param body The request body
      * @param requestConfiguration Configuration for the request such as headers, query parameters, and middleware options.
      * @return a {@link LinkRenameToConceptResponse}
      * @throws BadRequest When receiving a 400 status code
      * @throws Unauthorized When receiving a 401 status code
+     * @throws Forbidden When receiving a 403 status code
      * @throws NotFound When receiving a 404 status code
      * @throws ServerError When receiving a 500 status code
      */
@@ -89,12 +92,13 @@ public class RenameRequestBuilder extends BaseRequestBuilder {
         final HashMap<String, ParsableFactory<? extends Parsable>> errorMapping = new HashMap<String, ParsableFactory<? extends Parsable>>();
         errorMapping.put("400", BadRequest::createFromDiscriminatorValue);
         errorMapping.put("401", Unauthorized::createFromDiscriminatorValue);
+        errorMapping.put("403", Forbidden::createFromDiscriminatorValue);
         errorMapping.put("404", NotFound::createFromDiscriminatorValue);
         errorMapping.put("500", ServerError::createFromDiscriminatorValue);
         return this.requestAdapter.send(requestInfo, errorMapping, LinkRenameToConceptResponse::createFromDiscriminatorValue);
     }
     /**
-     * Bulk rename all linkTemplate toConcepts
+     * Rename the toConcept of every link template from `old` to `new`. Requires an administrator or maintainer login.
      * @param body The request body
      * @return a {@link RequestInformation}
      */
@@ -103,7 +107,7 @@ public class RenameRequestBuilder extends BaseRequestBuilder {
         return toPutRequestInformation(body, null);
     }
     /**
-     * Bulk rename all linkTemplate toConcepts
+     * Rename the toConcept of every link template from `old` to `new`. Requires an administrator or maintainer login.
      * @param body The request body
      * @param requestConfiguration Configuration for the request such as headers, query parameters, and middleware options.
      * @return a {@link RequestInformation}

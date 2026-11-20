@@ -1,27 +1,8 @@
-/*-
- * #%L
- * org.mbari.vars:oni-java-sdk
- * %%
- * Copyright (C) 2025 - 2026 Monterey Bay Aquarium Research Institute
- * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * #L%
- */
 {
-  "descriptionHash": "297FBFDBBAE714D1352B3BB3DA3D95866052BF05B28B5A64651E4D875D1738E6F3FE315D735FBD10C9A8B18DF6CFAE9A1C2A19B046D65D5219AB3A77F48CC347",
+  "descriptionHash": "F14067769666D5404A2601ECE5E92D63192696C9D59FAD379F5D505A409FD53282E3B483B8A8172208631476AC29060A75E098A2BACDB1D55ACA98E9EA970CF2",
   "descriptionLocation": "../../../../../../../resources/docs.yaml",
   "lockFileVersion": "1.0.0",
-  "kiotaVersion": "1.28.0",
+  "kiotaVersion": "1.39.0",
   "clientClassName": "Oni",
   "typeAccessModifier": "Public",
   "clientNamespaceName": "org.mbari.vars.oni.sdk.kiota",
@@ -49,5 +30,6 @@
   ],
   "includePatterns": [],
   "excludePatterns": [],
-  "disabledValidationRules": []
+  "disabledValidationRules": [],
+  "allowedExternalOrigins": []
 }

@@ -59,7 +59,7 @@ public class LoginRequestBuilder extends BaseRequestBuilder {
         super(requestAdapter, "{+baseurl}/v1/auth/login", rawUrl);
     }
     /**
-     * Login with username and password
+     * Log in with HTTP Basic auth (username and password) and receive a JWT. Any user except a Locked user can log in. What the token allows depends on the user&apos;s role: read-only users can only update their own account
      * @return a {@link AuthorizationSC}
      * @throws BadRequest When receiving a 400 status code
      * @throws Unauthorized When receiving a 401 status code
@@ -71,7 +71,7 @@ public class LoginRequestBuilder extends BaseRequestBuilder {
         return post(null);
     }
     /**
-     * Login with username and password
+     * Log in with HTTP Basic auth (username and password) and receive a JWT. Any user except a Locked user can log in. What the token allows depends on the user&apos;s role: read-only users can only update their own account
      * @param requestConfiguration Configuration for the request such as headers, query parameters, and middleware options.
      * @return a {@link AuthorizationSC}
      * @throws BadRequest When receiving a 400 status code
@@ -90,7 +90,7 @@ public class LoginRequestBuilder extends BaseRequestBuilder {
         return this.requestAdapter.send(requestInfo, errorMapping, AuthorizationSC::createFromDiscriminatorValue);
     }
     /**
-     * Login with username and password
+     * Log in with HTTP Basic auth (username and password) and receive a JWT. Any user except a Locked user can log in. What the token allows depends on the user&apos;s role: read-only users can only update their own account
      * @return a {@link RequestInformation}
      */
     @jakarta.annotation.Nonnull
@@ -98,7 +98,7 @@ public class LoginRequestBuilder extends BaseRequestBuilder {
         return toPostRequestInformation(null);
     }
     /**
-     * Login with username and password
+     * Log in with HTTP Basic auth (username and password) and receive a JWT. Any user except a Locked user can log in. What the token allows depends on the user&apos;s role: read-only users can only update their own account
      * @param requestConfiguration Configuration for the request such as headers, query parameters, and middleware options.
      * @return a {@link RequestInformation}
      */

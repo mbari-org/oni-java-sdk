@@ -60,7 +60,7 @@ public class CitationRequestBuilder extends BaseRequestBuilder {
         super(requestAdapter, "{+baseurl}/v1/references/query/citation{?limit*,offset*}", rawUrl);
     }
     /**
-     * Find references by citation glob
+     * Find references whose citation contains the `citation` text in the request body
      * @param body The request body
      * @return a {@link PageSeqReference}
      * @throws BadRequest When receiving a 400 status code
@@ -72,7 +72,7 @@ public class CitationRequestBuilder extends BaseRequestBuilder {
         return post(body, null);
     }
     /**
-     * Find references by citation glob
+     * Find references whose citation contains the `citation` text in the request body
      * @param body The request body
      * @param requestConfiguration Configuration for the request such as headers, query parameters, and middleware options.
      * @return a {@link PageSeqReference}
@@ -91,7 +91,7 @@ public class CitationRequestBuilder extends BaseRequestBuilder {
         return this.requestAdapter.send(requestInfo, errorMapping, PageSeqReference::createFromDiscriminatorValue);
     }
     /**
-     * Find references by citation glob
+     * Find references whose citation contains the `citation` text in the request body
      * @param body The request body
      * @return a {@link RequestInformation}
      */
@@ -100,7 +100,7 @@ public class CitationRequestBuilder extends BaseRequestBuilder {
         return toPostRequestInformation(body, null);
     }
     /**
-     * Find references by citation glob
+     * Find references whose citation contains the `citation` text in the request body
      * @param body The request body
      * @param requestConfiguration Configuration for the request such as headers, query parameters, and middleware options.
      * @return a {@link RequestInformation}
@@ -125,7 +125,7 @@ public class CitationRequestBuilder extends BaseRequestBuilder {
         return new CitationRequestBuilder(rawUrl, requestAdapter);
     }
     /**
-     * Find references by citation glob
+     * Find references whose citation contains the `citation` text in the request body
      */
     @jakarta.annotation.Generated("com.microsoft.kiota")
     public class PostQueryParameters implements QueryParameters {

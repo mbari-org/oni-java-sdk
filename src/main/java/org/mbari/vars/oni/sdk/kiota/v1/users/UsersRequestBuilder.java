@@ -33,18 +33,28 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import org.mbari.vars.oni.sdk.kiota.models.BadRequest;
+import org.mbari.vars.oni.sdk.kiota.models.Forbidden;
 import org.mbari.vars.oni.sdk.kiota.models.NotFound;
 import org.mbari.vars.oni.sdk.kiota.models.ServerError;
 import org.mbari.vars.oni.sdk.kiota.models.Unauthorized;
-import org.mbari.vars.oni.sdk.kiota.models.UserAccount;
 import org.mbari.vars.oni.sdk.kiota.models.UserAccountCreate;
+import org.mbari.vars.oni.sdk.kiota.models.UserAccountInfo;
 import org.mbari.vars.oni.sdk.kiota.v1.users.item.WithNameItemRequestBuilder;
+import org.mbari.vars.oni.sdk.kiota.v1.users.list.ListRequestBuilder;
 import org.mbari.vars.oni.sdk.kiota.v1.users.role.RoleRequestBuilder;
 /**
  * Builds and executes requests for operations under /v1/users
  */
 @jakarta.annotation.Generated("com.microsoft.kiota")
 public class UsersRequestBuilder extends BaseRequestBuilder {
+    /**
+     * The list property
+     * @return a {@link ListRequestBuilder}
+     */
+    @jakarta.annotation.Nonnull
+    public ListRequestBuilder list() {
+        return new ListRequestBuilder(pathParameters, requestAdapter);
+    }
     /**
      * The role property
      * @return a {@link RoleRequestBuilder}
@@ -83,65 +93,68 @@ public class UsersRequestBuilder extends BaseRequestBuilder {
     }
     /**
      * Get all user accounts
-     * @return a {@link java.util.List<UserAccount>}
+     * @return a {@link java.util.List<UserAccountInfo>}
      * @throws BadRequest When receiving a 400 status code
      * @throws NotFound When receiving a 404 status code
      * @throws ServerError When receiving a 500 status code
      */
     @jakarta.annotation.Nullable
-    public java.util.List<UserAccount> get() {
+    public java.util.List<UserAccountInfo> get() {
         return get(null);
     }
     /**
      * Get all user accounts
      * @param requestConfiguration Configuration for the request such as headers, query parameters, and middleware options.
-     * @return a {@link java.util.List<UserAccount>}
+     * @return a {@link java.util.List<UserAccountInfo>}
      * @throws BadRequest When receiving a 400 status code
      * @throws NotFound When receiving a 404 status code
      * @throws ServerError When receiving a 500 status code
      */
     @jakarta.annotation.Nullable
-    public java.util.List<UserAccount> get(@jakarta.annotation.Nullable final java.util.function.Consumer<GetRequestConfiguration> requestConfiguration) {
+    public java.util.List<UserAccountInfo> get(@jakarta.annotation.Nullable final java.util.function.Consumer<GetRequestConfiguration> requestConfiguration) {
         final RequestInformation requestInfo = toGetRequestInformation(requestConfiguration);
         final HashMap<String, ParsableFactory<? extends Parsable>> errorMapping = new HashMap<String, ParsableFactory<? extends Parsable>>();
         errorMapping.put("400", BadRequest::createFromDiscriminatorValue);
         errorMapping.put("404", NotFound::createFromDiscriminatorValue);
         errorMapping.put("500", ServerError::createFromDiscriminatorValue);
-        return this.requestAdapter.sendCollection(requestInfo, errorMapping, UserAccount::createFromDiscriminatorValue);
+        return this.requestAdapter.sendCollection(requestInfo, errorMapping, UserAccountInfo::createFromDiscriminatorValue);
     }
     /**
-     * Create a new user account
+     * Create a new user account. Accepts a JSON or form body. `role` defaults to ReadOnly and must be a valid role (400 otherwise). Requires an API key token, an administrator login, or a maintainer login; maintainers can only create ReadOnly accounts (403 otherwise).
      * @param body The request body
-     * @return a {@link UserAccount}
+     * @return a {@link UserAccountInfo}
      * @throws BadRequest When receiving a 400 status code
      * @throws Unauthorized When receiving a 401 status code
+     * @throws Forbidden When receiving a 403 status code
      * @throws NotFound When receiving a 404 status code
      * @throws ServerError When receiving a 500 status code
      */
     @jakarta.annotation.Nullable
-    public UserAccount post(@jakarta.annotation.Nonnull final UserAccountCreate body) {
+    public UserAccountInfo post(@jakarta.annotation.Nonnull final UserAccountCreate body) {
         return post(body, null);
     }
     /**
-     * Create a new user account
+     * Create a new user account. Accepts a JSON or form body. `role` defaults to ReadOnly and must be a valid role (400 otherwise). Requires an API key token, an administrator login, or a maintainer login; maintainers can only create ReadOnly accounts (403 otherwise).
      * @param body The request body
      * @param requestConfiguration Configuration for the request such as headers, query parameters, and middleware options.
-     * @return a {@link UserAccount}
+     * @return a {@link UserAccountInfo}
      * @throws BadRequest When receiving a 400 status code
      * @throws Unauthorized When receiving a 401 status code
+     * @throws Forbidden When receiving a 403 status code
      * @throws NotFound When receiving a 404 status code
      * @throws ServerError When receiving a 500 status code
      */
     @jakarta.annotation.Nullable
-    public UserAccount post(@jakarta.annotation.Nonnull final UserAccountCreate body, @jakarta.annotation.Nullable final java.util.function.Consumer<PostRequestConfiguration> requestConfiguration) {
+    public UserAccountInfo post(@jakarta.annotation.Nonnull final UserAccountCreate body, @jakarta.annotation.Nullable final java.util.function.Consumer<PostRequestConfiguration> requestConfiguration) {
         Objects.requireNonNull(body);
         final RequestInformation requestInfo = toPostRequestInformation(body, requestConfiguration);
         final HashMap<String, ParsableFactory<? extends Parsable>> errorMapping = new HashMap<String, ParsableFactory<? extends Parsable>>();
         errorMapping.put("400", BadRequest::createFromDiscriminatorValue);
         errorMapping.put("401", Unauthorized::createFromDiscriminatorValue);
+        errorMapping.put("403", Forbidden::createFromDiscriminatorValue);
         errorMapping.put("404", NotFound::createFromDiscriminatorValue);
         errorMapping.put("500", ServerError::createFromDiscriminatorValue);
-        return this.requestAdapter.send(requestInfo, errorMapping, UserAccount::createFromDiscriminatorValue);
+        return this.requestAdapter.send(requestInfo, errorMapping, UserAccountInfo::createFromDiscriminatorValue);
     }
     /**
      * Get all user accounts
@@ -164,7 +177,7 @@ public class UsersRequestBuilder extends BaseRequestBuilder {
         return requestInfo;
     }
     /**
-     * Create a new user account
+     * Create a new user account. Accepts a JSON or form body. `role` defaults to ReadOnly and must be a valid role (400 otherwise). Requires an API key token, an administrator login, or a maintainer login; maintainers can only create ReadOnly accounts (403 otherwise).
      * @param body The request body
      * @return a {@link RequestInformation}
      */
@@ -173,7 +186,7 @@ public class UsersRequestBuilder extends BaseRequestBuilder {
         return toPostRequestInformation(body, null);
     }
     /**
-     * Create a new user account
+     * Create a new user account. Accepts a JSON or form body. `role` defaults to ReadOnly and must be a valid role (400 otherwise). Requires an API key token, an administrator login, or a maintainer login; maintainers can only create ReadOnly accounts (403 otherwise).
      * @param body The request body
      * @param requestConfiguration Configuration for the request such as headers, query parameters, and middleware options.
      * @return a {@link RequestInformation}

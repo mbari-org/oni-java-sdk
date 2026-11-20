@@ -24,7 +24,7 @@ import com.microsoft.kiota.BaseRequestBuilder;
 import com.microsoft.kiota.RequestAdapter;
 import java.util.HashMap;
 import java.util.Objects;
-import org.mbari.vars.oni.sdk.kiota.v1.history.reject.item.WithP1ItemRequestBuilder;
+import org.mbari.vars.oni.sdk.kiota.v1.history.reject.item.RejectItemRequestBuilder;
 /**
  * Builds and executes requests for operations under /v1/history/reject
  */
@@ -32,15 +32,15 @@ import org.mbari.vars.oni.sdk.kiota.v1.history.reject.item.WithP1ItemRequestBuil
 public class RejectRequestBuilder extends BaseRequestBuilder {
     /**
      * Gets an item from the org.mbari.vars.oni.sdk.kiota.v1.history.reject.item collection
-     * @param p1 Unique identifier of the item
-     * @return a {@link WithP1ItemRequestBuilder}
+     * @param id Unique identifier of the item
+     * @return a {@link RejectItemRequestBuilder}
      */
     @jakarta.annotation.Nonnull
-    public WithP1ItemRequestBuilder byP1(@jakarta.annotation.Nonnull final Long p1) {
-        Objects.requireNonNull(p1);
+    public RejectItemRequestBuilder byId(@jakarta.annotation.Nonnull final Long id) {
+        Objects.requireNonNull(id);
         final HashMap<String, Object> urlTplParams = new HashMap<String, Object>(this.pathParameters);
-        urlTplParams.put("p1", p1);
-        return new WithP1ItemRequestBuilder(urlTplParams, requestAdapter);
+        urlTplParams.put("id", id);
+        return new RejectItemRequestBuilder(urlTplParams, requestAdapter);
     }
     /**
      * Instantiates a new {@link RejectRequestBuilder} and sets the default values.

@@ -22,6 +22,7 @@ package org.mbari.vars.oni.sdk.r1.models;
 
 import org.mbari.vars.oni.sdk.kiota.models.UserAccount;
 import org.mbari.vars.oni.sdk.kiota.models.UserAccountCreate;
+import org.mbari.vars.oni.sdk.kiota.models.UserAccountInfo;
 import org.mbari.vars.oni.sdk.kiota.models.UserAccountUpdate;
 
 /**
@@ -108,6 +109,16 @@ public class User {
     public static User fromKiota(UserAccount userAccount) {
         return new User(userAccount.getUsername(),
                 userAccount.getPassword(),
+                userAccount.getRole(),
+                userAccount.getFirstName(),
+                userAccount.getLastName(),
+                userAccount.getAffiliation(),
+                userAccount.getEmail());
+    }
+
+    public static User fromKiota(UserAccountInfo userAccount) {
+        return new User(userAccount.getUsername(),
+                null,
                 userAccount.getRole(),
                 userAccount.getFirstName(),
                 userAccount.getLastName(),

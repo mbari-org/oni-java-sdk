@@ -34,6 +34,7 @@ import java.util.Map;
 import java.util.Objects;
 import org.mbari.vars.oni.sdk.kiota.models.BadRequest;
 import org.mbari.vars.oni.sdk.kiota.models.ExtendedLink;
+import org.mbari.vars.oni.sdk.kiota.models.Forbidden;
 import org.mbari.vars.oni.sdk.kiota.models.LinkUpdate;
 import org.mbari.vars.oni.sdk.kiota.models.NotFound;
 import org.mbari.vars.oni.sdk.kiota.models.ServerError;
@@ -60,10 +61,11 @@ public class LinktemplatesItemRequestBuilder extends BaseRequestBuilder {
         super(requestAdapter, "{+baseurl}/v1/linktemplates/{id}", rawUrl);
     }
     /**
-     * Delete a link template
+     * Delete a link template. Requires an administrator or maintainer login. Administrators delete immediately; other users create a pending delete that must be approved by an administrator.
      * @return a {@link LinktemplatesDeleteResponse}
      * @throws BadRequest When receiving a 400 status code
      * @throws Unauthorized When receiving a 401 status code
+     * @throws Forbidden When receiving a 403 status code
      * @throws NotFound When receiving a 404 status code
      * @throws ServerError When receiving a 500 status code
      */
@@ -72,11 +74,12 @@ public class LinktemplatesItemRequestBuilder extends BaseRequestBuilder {
         return delete(null);
     }
     /**
-     * Delete a link template
+     * Delete a link template. Requires an administrator or maintainer login. Administrators delete immediately; other users create a pending delete that must be approved by an administrator.
      * @param requestConfiguration Configuration for the request such as headers, query parameters, and middleware options.
      * @return a {@link LinktemplatesDeleteResponse}
      * @throws BadRequest When receiving a 400 status code
      * @throws Unauthorized When receiving a 401 status code
+     * @throws Forbidden When receiving a 403 status code
      * @throws NotFound When receiving a 404 status code
      * @throws ServerError When receiving a 500 status code
      */
@@ -86,6 +89,7 @@ public class LinktemplatesItemRequestBuilder extends BaseRequestBuilder {
         final HashMap<String, ParsableFactory<? extends Parsable>> errorMapping = new HashMap<String, ParsableFactory<? extends Parsable>>();
         errorMapping.put("400", BadRequest::createFromDiscriminatorValue);
         errorMapping.put("401", Unauthorized::createFromDiscriminatorValue);
+        errorMapping.put("403", Forbidden::createFromDiscriminatorValue);
         errorMapping.put("404", NotFound::createFromDiscriminatorValue);
         errorMapping.put("500", ServerError::createFromDiscriminatorValue);
         return this.requestAdapter.send(requestInfo, errorMapping, LinktemplatesDeleteResponse::createFromDiscriminatorValue);
@@ -119,11 +123,12 @@ public class LinktemplatesItemRequestBuilder extends BaseRequestBuilder {
         return this.requestAdapter.send(requestInfo, errorMapping, ExtendedLink::createFromDiscriminatorValue);
     }
     /**
-     * Update a link template
+     * Update a link template. Requires an administrator or maintainer login. Maintainer changes are applied and recorded as pending history.
      * @param body The request body
      * @return a {@link ExtendedLink}
      * @throws BadRequest When receiving a 400 status code
      * @throws Unauthorized When receiving a 401 status code
+     * @throws Forbidden When receiving a 403 status code
      * @throws NotFound When receiving a 404 status code
      * @throws ServerError When receiving a 500 status code
      */
@@ -132,12 +137,13 @@ public class LinktemplatesItemRequestBuilder extends BaseRequestBuilder {
         return put(body, null);
     }
     /**
-     * Update a link template
+     * Update a link template. Requires an administrator or maintainer login. Maintainer changes are applied and recorded as pending history.
      * @param body The request body
      * @param requestConfiguration Configuration for the request such as headers, query parameters, and middleware options.
      * @return a {@link ExtendedLink}
      * @throws BadRequest When receiving a 400 status code
      * @throws Unauthorized When receiving a 401 status code
+     * @throws Forbidden When receiving a 403 status code
      * @throws NotFound When receiving a 404 status code
      * @throws ServerError When receiving a 500 status code
      */
@@ -148,12 +154,13 @@ public class LinktemplatesItemRequestBuilder extends BaseRequestBuilder {
         final HashMap<String, ParsableFactory<? extends Parsable>> errorMapping = new HashMap<String, ParsableFactory<? extends Parsable>>();
         errorMapping.put("400", BadRequest::createFromDiscriminatorValue);
         errorMapping.put("401", Unauthorized::createFromDiscriminatorValue);
+        errorMapping.put("403", Forbidden::createFromDiscriminatorValue);
         errorMapping.put("404", NotFound::createFromDiscriminatorValue);
         errorMapping.put("500", ServerError::createFromDiscriminatorValue);
         return this.requestAdapter.send(requestInfo, errorMapping, ExtendedLink::createFromDiscriminatorValue);
     }
     /**
-     * Delete a link template
+     * Delete a link template. Requires an administrator or maintainer login. Administrators delete immediately; other users create a pending delete that must be approved by an administrator.
      * @return a {@link RequestInformation}
      */
     @jakarta.annotation.Nonnull
@@ -161,7 +168,7 @@ public class LinktemplatesItemRequestBuilder extends BaseRequestBuilder {
         return toDeleteRequestInformation(null);
     }
     /**
-     * Delete a link template
+     * Delete a link template. Requires an administrator or maintainer login. Administrators delete immediately; other users create a pending delete that must be approved by an administrator.
      * @param requestConfiguration Configuration for the request such as headers, query parameters, and middleware options.
      * @return a {@link RequestInformation}
      */
@@ -193,7 +200,7 @@ public class LinktemplatesItemRequestBuilder extends BaseRequestBuilder {
         return requestInfo;
     }
     /**
-     * Update a link template
+     * Update a link template. Requires an administrator or maintainer login. Maintainer changes are applied and recorded as pending history.
      * @param body The request body
      * @return a {@link RequestInformation}
      */
@@ -202,7 +209,7 @@ public class LinktemplatesItemRequestBuilder extends BaseRequestBuilder {
         return toPutRequestInformation(body, null);
     }
     /**
-     * Update a link template
+     * Update a link template. Requires an administrator or maintainer login. Maintainer changes are applied and recorded as pending history.
      * @param body The request body
      * @param requestConfiguration Configuration for the request such as headers, query parameters, and middleware options.
      * @return a {@link RequestInformation}

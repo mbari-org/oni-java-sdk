@@ -1,13 +1,15 @@
-openapi: 3.1.0
+openapi: 3.0.0
 info:
   title: oni
-  version: 1.9.2
+  version: 1.11.1
 paths:
   /v1/auth/login:
     post:
       tags:
       - Authorization
-      description: Login with username and password
+      description: 'Log in with HTTP Basic auth (username and password) and receive
+        a JWT. Any user except a Locked user can log in. What the token allows depends
+        on the user''s role: read-only users can only update their own account'
       operationId: login
       responses:
         '200':
@@ -87,6 +89,55 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ServerError'
+  /v1/cache/clear:
+    post:
+      tags:
+      - Cache
+      description: Clear the in-memory knowledgebase cache so the next request reloads
+        from the database. Use this after changing the database directly (e.g. a manual
+        SQL fix). When NATS messaging is enabled, every Oni instance clears its cache.
+        Requires an administrator login; API key tokens are not accepted
+      operationId: clearCache
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+      security:
+      - {}
+      - httpAuth1: []
   /v1/concept/query/root:
     get:
       tags:
@@ -122,7 +173,7 @@ paths:
     get:
       tags:
       - Concept
-      description: Find the parent of a concept
+      description: Find the parent of a concept. Returns 404 for the root concept
       operationId: findParent
       parameters:
       - name: name
@@ -159,7 +210,7 @@ paths:
     get:
       tags:
       - Concept
-      description: Find the children of a concept
+      description: Find the immediate children of a concept, sorted by name
       operationId: findChildren
       parameters:
       - name: name
@@ -198,7 +249,8 @@ paths:
     get:
       tags:
       - Concept
-      description: Find concepts by name containing
+      description: Find concepts with a name containing the given text (case-insensitive),
+        sorted by name
       operationId: findByNameContaining
       parameters:
       - name: name
@@ -237,7 +289,7 @@ paths:
     get:
       tags:
       - Concept
-      description: List valid ranks
+      description: List the valid rank level and rank name combinations
       operationId: listValidRanks
       responses:
         '200':
@@ -270,7 +322,7 @@ paths:
     get:
       tags:
       - Concept
-      description: Find a concept by name
+      description: Find a concept by any of its names (primary or alternate)
       operationId: findByName
       parameters:
       - name: name
@@ -306,8 +358,13 @@ paths:
     put:
       tags:
       - Concept
-      description: Update a concept. To remove a rank name or level, set it to an
-        empty string. Only administrators can remove rank names and levels.
+      description: Update a concept by name. Set `parentName` to move the concept;
+        it cannot be moved under itself or one of its descendants, and the root cannot
+        be given a parent (400). An invalid rank or an aphiaId already used by another
+        concept returns 400. To remove a rank name or level, set it to an empty string;
+        only administrators can remove them (403 otherwise). Requires an administrator
+        or maintainer login. Maintainer changes are applied and recorded as pending
+        history for an administrator to approve or reject.
       operationId: updateConcept
       parameters:
       - name: name
@@ -340,6 +397,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Unauthorized'
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
         '404':
           description: ''
           content:
@@ -358,7 +421,9 @@ paths:
     delete:
       tags:
       - Concept
-      description: Delete a concept
+      description: Delete a concept and all its descendants by name. Requires an administrator
+        or maintainer login. Administrators delete immediately; other users create
+        a pending delete that must be approved by an administrator.
       operationId: deleteConcept
       parameters:
       - name: name
@@ -385,6 +450,168 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Unauthorized'
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+      security:
+      - {}
+      - httpAuth1: []
+  /v1/concept/id/{id}:
+    get:
+      tags:
+      - Concept
+      description: Find a concept by its database id
+      operationId: findById
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConceptMetadata'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+    put:
+      tags:
+      - Concept
+      description: Update a concept by id. Set `parentName` to move the concept; it
+        cannot be moved under itself or one of its descendants, and the root cannot
+        be given a parent (400). An invalid rank or an aphiaId already used by another
+        concept returns 400. To remove a rank name or level, set it to an empty string;
+        only administrators can remove them (403 otherwise). Requires an administrator
+        or maintainer login. Maintainer changes are applied and recorded as pending
+        history for an administrator to approve or reject.
+      operationId: updateConceptById
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConceptUpdate'
+        required: true
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConceptMetadata'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+      security:
+      - {}
+      - httpAuth1: []
+    delete:
+      tags:
+      - Concept
+      description: Delete a concept and all its descendants by id. Requires an administrator
+        or maintainer login. Administrators delete immediately; other users create
+        a pending delete that must be approved by an administrator.
+      operationId: deleteConceptById
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
         '404':
           description: ''
           content:
@@ -404,7 +631,7 @@ paths:
     get:
       tags:
       - Concept
-      description: Get all concept names
+      description: Get the names of all concepts (primary and alternate), up to 10,000
       operationId: allConcepts
       responses:
         '200':
@@ -436,7 +663,12 @@ paths:
     post:
       tags:
       - Concept
-      description: Create a new concept
+      description: Create a new concept as a child of `parentName`. If `parentName`
+        is omitted the concept is created as the root, which fails with 400 if a root
+        already exists. Returns 400 if the name already exists or the rank is invalid
+        (see /concept/ranks). Requires an administrator or maintainer login. Maintainer
+        changes are applied and recorded as pending history for an administrator to
+        approve or reject.
       operationId: createConcept
       requestBody:
         content:
@@ -463,6 +695,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Unauthorized'
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
         '404':
           description: ''
           content:
@@ -482,7 +720,7 @@ paths:
     get:
       tags:
       - ConceptName
-      description: Find a concept name
+      description: Find the concept that owns a concept name
       operationId: findConceptName
       parameters:
       - name: name
@@ -518,8 +756,11 @@ paths:
     put:
       tags:
       - ConceptName
-      description: Update a concept name. To remove the author, set it to an empty
-        string
+      description: Update a concept name. Rename it (`newName`, 400 if that name already
+        exists), change its type, or change its author (set `author` to an empty string
+        to remove it). A primary name cannot be changed to another type (400). Requires
+        an administrator or maintainer login. Maintainer changes are applied and recorded
+        as pending history.
       operationId: updateConceptName
       parameters:
       - name: name
@@ -552,6 +793,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Unauthorized'
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
         '404':
           description: ''
           content:
@@ -570,7 +817,9 @@ paths:
     delete:
       tags:
       - ConceptName
-      description: Delete a concept name
+      description: Delete a concept name. Primary names cannot be deleted (400). Requires
+        an administrator or maintainer login. Administrators delete immediately; other
+        users create a pending delete that must be approved by an administrator.
       operationId: deleteConceptName
       parameters:
       - name: name
@@ -597,6 +846,166 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Unauthorized'
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+      security:
+      - {}
+      - httpAuth1: []
+  /v1/names/id/{id}:
+    get:
+      tags:
+      - ConceptName
+      description: Find the concept that owns the concept name with the given id
+      operationId: findConceptNameById
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RawConcept'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+    put:
+      tags:
+      - ConceptName
+      description: Update a concept name by id. Rename it (`newName`, 400 if that
+        name already exists), change its type, or change its author (set `author`
+        to an empty string to remove it). A primary name cannot be changed to another
+        type (400). Requires an administrator or maintainer login. Maintainer changes
+        are applied and recorded as pending history.
+      operationId: updateConceptNameById
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConceptNameUpdate'
+        required: true
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RawConcept'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+      security:
+      - {}
+      - httpAuth1: []
+    delete:
+      tags:
+      - ConceptName
+      description: Delete a concept name by id. Primary names cannot be deleted (400).
+        Requires an administrator or maintainer login. Administrators delete immediately;
+        other users create a pending delete that must be approved by an administrator.
+      operationId: deleteConceptNameById
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RawConcept'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
         '404':
           description: ''
           content:
@@ -661,7 +1070,10 @@ paths:
     post:
       tags:
       - ConceptName
-      description: Add a new concept name
+      description: Add a new name (`newName`) to the concept that owns `name`. If
+        `nameType` is primary, the current primary name becomes a former name. Returns
+        400 if `newName` already exists. Requires an administrator or maintainer login.
+        Maintainer changes are applied and recorded as pending history.
       operationId: addConceptName
       requestBody:
         content:
@@ -688,6 +1100,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Unauthorized'
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
         '404':
           description: ''
           content:
@@ -734,14 +1152,14 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ServerError'
-  /v1/history/concept/{p1}:
+  /v1/history/concept/{conceptName}:
     get:
       tags:
       - History
-      description: Find a history record by its concept name
+      description: Find all history records for a concept
       operationId: findHistoryByConceptName
       parameters:
-      - name: p1
+      - name: conceptName
         in: path
         required: true
         schema:
@@ -773,14 +1191,15 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ServerError'
-  /v1/history/approve/{p1}:
+  /v1/history/approve/{id}:
     put:
       tags:
       - History
-      description: Approve a history record
+      description: Approve a pending history record. For a pending delete, the item
+        is deleted. Requires an administrator login (403 otherwise)
       operationId: approveHistory
       parameters:
-      - name: p1
+      - name: id
         in: path
         required: true
         schema:
@@ -805,6 +1224,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Unauthorized'
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
         '404':
           description: ''
           content:
@@ -820,14 +1245,16 @@ paths:
       security:
       - {}
       - httpAuth1: []
-  /v1/history/reject/{p1}:
+  /v1/history/reject/{id}:
     put:
       tags:
       - History
-      description: Reject a history record
+      description: Reject a pending history record and undo the change it describes
+        (e.g. remove a pending addition or restore a previous value). Requires an
+        administrator login (403 otherwise)
       operationId: rejectHistory
       parameters:
-      - name: p1
+      - name: id
         in: path
         required: true
         schema:
@@ -852,6 +1279,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Unauthorized'
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
         '404':
           description: ''
           content:
@@ -919,6 +1352,15 @@ paths:
         schema:
           type: integer
           format: int32
+      - name: sort
+        in: query
+        description: 'Sort by field and optional direction (asc or desc), e.g. ''processedTimestamp,desc''
+          or ''concept'' (ascending). Common fields: creationTimestamp, creatorName,
+          oldValue, newValue, concept, processedTimestamp, processorName. Defaults
+          to creationTimestamp ascending. An unknown field returns 400'
+        required: false
+        schema:
+          type: string
       responses:
         '200':
           description: ''
@@ -996,6 +1438,15 @@ paths:
         schema:
           type: integer
           format: int32
+      - name: sort
+        in: query
+        description: 'Sort by field and optional direction (asc or desc), e.g. ''creationTimestamp,desc''
+          or ''creatorName'' (ascending). Common fields: creationTimestamp, creatorName,
+          oldValue, newValue, concept. Defaults to creationTimestamp ascending. An
+          unknown field returns 400'
+        required: false
+        schema:
+          type: string
       responses:
         '200':
           description: ''
@@ -1021,14 +1472,14 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ServerError'
-  /v1/history/{p1}:
+  /v1/history/{id}:
     get:
       tags:
       - History
       description: Find a history record by its id
       operationId: findHistoryById
       parameters:
-      - name: p1
+      - name: id
         in: path
         required: true
         schema:
@@ -1062,10 +1513,11 @@ paths:
     delete:
       tags:
       - History
-      description: Delete a history record
+      description: Delete a history record. Requires an administrator login; API key
+        tokens are not accepted
       operationId: deleteHistory
       parameters:
-      - name: p1
+      - name: id
         in: path
         required: true
         schema:
@@ -1090,6 +1542,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Unauthorized'
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
         '404':
           description: ''
           content:
@@ -1260,6 +1718,59 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ServerError'
+  /v1/linkrealizations/toconcept/rename:
+    put:
+      tags:
+      - LinkRealizations
+      description: Rename the toConcept of every link realization from `old` to `new`.
+        Requires an administrator or maintainer login.
+      operationId: renameLinkRealizationsToConcept
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LinkRenameToConceptRequest'
+        required: true
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LinkRenameToConceptResponse'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+      security:
+      - {}
+      - httpAuth1: []
   /v1/linkrealizations/concept/{conceptName}:
     get:
       tags:
@@ -1377,6 +1888,83 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ServerError'
+  /v1/linkrealizations/toconcept/count/{toConcept}:
+    get:
+      tags:
+      - LinkRealizations
+      description: Count all link realizations by toConcept
+      operationId: countLinkRealizationsByToConcept
+      parameters:
+      - name: toConcept
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: integer
+                format: int64
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+  /v1/linkrealizations/toconcept/{toConcept}:
+    get:
+      tags:
+      - LinkRealizations
+      description: Find all link realizations by toConcept
+      operationId: findLinkRealizationsByToConcept
+      parameters:
+      - name: toConcept
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ExtendedLink'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
   /v1/linkrealizations/count:
     get:
       tags:
@@ -1457,7 +2045,9 @@ paths:
     post:
       tags:
       - LinkRealizations
-      description: Create a new link realization
+      description: Create a new link realization on a concept. Requires an administrator
+        or maintainer login. Maintainer changes are applied and recorded as pending
+        history.
       operationId: createLinkRealization
       requestBody:
         content:
@@ -1484,6 +2074,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Unauthorized'
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
         '404':
           description: ''
           content:
@@ -1503,7 +2099,7 @@ paths:
     get:
       tags:
       - LinkRealizations
-      description: Find a link realizations by its id
+      description: Find a link realization by its id
       operationId: findLinkRealizationeById
       parameters:
       - name: id
@@ -1540,7 +2136,8 @@ paths:
     put:
       tags:
       - LinkRealizations
-      description: Update a link realization
+      description: Update a link realization. Requires an administrator or maintainer
+        login. Maintainer changes are applied and recorded as pending history.
       operationId: updateLinkRealization
       parameters:
       - name: id
@@ -1574,6 +2171,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Unauthorized'
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
         '404':
           description: ''
           content:
@@ -1592,7 +2195,9 @@ paths:
     delete:
       tags:
       - LinkRealizations
-      description: Delete a link realization
+      description: Delete a link realization. Requires an administrator or maintainer
+        login. Administrators delete immediately; other users create a pending delete
+        that must be approved by an administrator.
       operationId: deleteLinkRealization
       parameters:
       - name: id
@@ -1620,6 +2225,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Unauthorized'
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
         '404':
           description: ''
           content:
@@ -1639,7 +2250,8 @@ paths:
     put:
       tags:
       - LinkTemplates
-      description: Bulk rename all linkTemplate toConcepts
+      description: Rename the toConcept of every link template from `old` to `new`.
+        Requires an administrator or maintainer login.
       operationId: renameToConcept
       requestBody:
         content:
@@ -1666,6 +2278,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Unauthorized'
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
         '404':
           description: ''
           content:
@@ -2039,7 +2657,9 @@ paths:
     post:
       tags:
       - LinkTemplates
-      description: Create a new link template
+      description: Create a new link template on a concept. Requires an administrator
+        or maintainer login. Maintainer changes are applied and recorded as pending
+        history.
       operationId: createLinkTemplate
       requestBody:
         content:
@@ -2066,6 +2686,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Unauthorized'
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
         '404':
           description: ''
           content:
@@ -2122,7 +2748,8 @@ paths:
     put:
       tags:
       - LinkTemplates
-      description: Update a link template
+      description: Update a link template. Requires an administrator or maintainer
+        login. Maintainer changes are applied and recorded as pending history.
       operationId: updateLinkTemplate
       parameters:
       - name: id
@@ -2156,6 +2783,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Unauthorized'
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
         '404':
           description: ''
           content:
@@ -2174,7 +2807,9 @@ paths:
     delete:
       tags:
       - LinkTemplates
-      description: Delete a link template
+      description: Delete a link template. Requires an administrator or maintainer
+        login. Administrators delete immediately; other users create a pending delete
+        that must be approved by an administrator.
       operationId: deleteLinkTemplate
       parameters:
       - name: id
@@ -2202,6 +2837,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Unauthorized'
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
         '404':
           description: ''
           content:
@@ -2258,7 +2899,8 @@ paths:
     put:
       tags:
       - Media
-      description: Update a media record
+      description: Update a media record. Requires an administrator or maintainer
+        login. Changes are applied immediately and are not recorded in the history.
       operationId: updateMedia
       parameters:
       - name: id
@@ -2292,6 +2934,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Unauthorized'
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
         '404':
           description: ''
           content:
@@ -2310,7 +2958,9 @@ paths:
     delete:
       tags:
       - Media
-      description: Delete a media record
+      description: Delete a media record. Requires an administrator or maintainer
+        login. Administrators delete immediately; other users create a pending delete
+        that must be approved by an administrator.
       operationId: deleteMedia
       parameters:
       - name: id
@@ -2338,6 +2988,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Unauthorized'
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
         '404':
           description: ''
           content:
@@ -2396,7 +3052,9 @@ paths:
     post:
       tags:
       - Media
-      description: Create a new media record
+      description: Create a new media record on a concept. Requires an administrator
+        or maintainer login. Maintainer changes are applied and recorded as pending
+        history.
       operationId: createMedia
       requestBody:
         description: The media record to create. mediaType defaults to 'IMAGE', but
@@ -2425,6 +3083,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Unauthorized'
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
         '404':
           description: ''
           content:
@@ -2518,6 +3182,8 @@ paths:
     get:
       tags:
       - Phylogeny
+      description: 'Find the siblings of a concept: the children of its parent, including
+        the concept itself'
       operationId: getV1PhylogenySiblingsName
       parameters:
       - name: name
@@ -2556,6 +3222,8 @@ paths:
     get:
       tags:
       - Phylogeny
+      description: Find the lineage from the root down to a concept, as a flat list
+        (children are omitted)
       operationId: getV1PhylogenyBasicName
       parameters:
       - name: name
@@ -2594,6 +3262,8 @@ paths:
     get:
       tags:
       - Phylogeny
+      description: Find a concept and all of its descendants, as a flat list (children
+        are omitted)
       operationId: getV1PhylogenyTaxaName
       parameters:
       - name: name
@@ -2601,6 +3271,211 @@ paths:
         required: true
         schema:
           type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SerdeConcept'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+  /v1/phylogeny/up/id/{id}:
+    get:
+      tags:
+      - Phylogeny
+      description: Find the branch from the concept with the given id up to the root
+      operationId: phylogenyUpById
+      parameters:
+      - name: id
+        in: path
+        description: Concept id
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SerdeConcept'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+  /v1/phylogeny/down/id/{id}:
+    get:
+      tags:
+      - Phylogeny
+      description: Find the branch from the concept with the given id down to the
+        leaves
+      operationId: phylogenyDownById
+      parameters:
+      - name: id
+        in: path
+        description: Concept id
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SerdeConcept'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+  /v1/phylogeny/siblings/id/{id}:
+    get:
+      tags:
+      - Phylogeny
+      description: 'Find the siblings of the concept with the given id: the children
+        of its parent, including the concept itself'
+      operationId: phylogenySiblingsById
+      parameters:
+      - name: id
+        in: path
+        description: Concept id
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SerdeConcept'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+  /v1/phylogeny/basic/id/{id}:
+    get:
+      tags:
+      - Phylogeny
+      description: Find the lineage from the root down to the concept with the given
+        id, as a flat list (children are omitted)
+      operationId: phylogenyBasicById
+      parameters:
+      - name: id
+        in: path
+        description: Concept id
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SerdeConcept'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
+  /v1/phylogeny/taxa/id/{id}:
+    get:
+      tags:
+      - Phylogeny
+      description: Find the concept with the given id and all of its descendants,
+        as a flat list (children are omitted)
+      operationId: phylogenyTaxaById
+      parameters:
+      - name: id
+        in: path
+        description: Concept id
+        required: true
+        schema:
+          type: integer
+          format: int64
       responses:
         '200':
           description: ''
@@ -2673,7 +3548,7 @@ paths:
     get:
       tags:
       - Preferences
-      description: Get all prefNode names matching a node name and key
+      description: Get the prefNodes with a node name and, optionally, a key
       operationId: byNodeNameAndKey
       parameters:
       - name: name
@@ -2719,8 +3594,9 @@ paths:
     put:
       tags:
       - Preferences
-      description: Update a prefNode. Can be called using form body or json body.
-        If name and key are not in the request body, they must be in the query parameters.
+      description: Update a prefNode. Accepts a JSON or form body. If name and key
+        are not in the request body, they must be in the query parameters (400 otherwise).
+        Requires an API key token or an administrator or maintainer login
       operationId: updatePrefNode
       parameters:
       - name: name
@@ -2763,6 +3639,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Unauthorized'
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
         '404':
           description: ''
           content:
@@ -2781,7 +3663,8 @@ paths:
     post:
       tags:
       - Preferences
-      description: Create a new prefNode
+      description: Create a new prefNode. Accepts a JSON or form body. Requires an
+        API key token or an administrator or maintainer login
       operationId: createPrefNode
       requestBody:
         content:
@@ -2811,6 +3694,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Unauthorized'
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
         '404':
           description: ''
           content:
@@ -2829,7 +3718,8 @@ paths:
     delete:
       tags:
       - Preferences
-      description: Delete a prefNode
+      description: Delete a prefNode. Requires an API key token or an administrator
+        or maintainer login
       operationId: deletePrefNode
       parameters:
       - name: name
@@ -2865,6 +3755,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Unauthorized'
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
         '404':
           description: ''
           content:
@@ -2960,7 +3856,8 @@ paths:
     put:
       tags:
       - References
-      description: Add a reference to a concept
+      description: Add a reference to a concept. Requires an API key token or an administrator
+        or maintainer login.
       operationId: addReferenceToConcept
       parameters:
       - name: id
@@ -2993,6 +3890,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Unauthorized'
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
         '404':
           description: ''
           content:
@@ -3012,7 +3915,8 @@ paths:
     put:
       tags:
       - References
-      description: Remove a reference from a concept
+      description: Remove a reference from a concept. Requires an API key token or
+        an administrator or maintainer login.
       operationId: removeReferenceFromConcept
       parameters:
       - name: id
@@ -3045,6 +3949,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Unauthorized'
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
         '404':
           description: ''
           content:
@@ -3064,7 +3974,8 @@ paths:
     post:
       tags:
       - References
-      description: Find references by citation glob
+      description: Find references whose citation contains the `citation` text in
+        the request body
       operationId: findReferencesByCitationGlob
       parameters:
       - name: offset
@@ -3116,7 +4027,8 @@ paths:
     post:
       tags:
       - References
-      description: Find a reference by DOI
+      description: Find a reference by the `doi` in the request body. Returns 400
+        if `doi` is missing
       operationId: findReferenceByDoi
       requestBody:
         content:
@@ -3190,7 +4102,8 @@ paths:
     put:
       tags:
       - References
-      description: Update a reference
+      description: Update a reference. Requires an API key token or an administrator
+        or maintainer login.
       operationId: updateReference
       parameters:
       - name: id
@@ -3224,6 +4137,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Unauthorized'
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
         '404':
           description: ''
           content:
@@ -3242,7 +4161,8 @@ paths:
     delete:
       tags:
       - References
-      description: Delete a reference
+      description: Delete a reference. Requires an API key token or an administrator
+        or maintainer login.
       operationId: deleteReference
       parameters:
       - name: id
@@ -3270,6 +4190,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Unauthorized'
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
         '404':
           description: ''
           content:
@@ -3334,7 +4260,8 @@ paths:
     post:
       tags:
       - References
-      description: Create a new reference
+      description: Create a new reference. Requires an API key token or an administrator
+        or maintainer login.
       operationId: createReference
       requestBody:
         content:
@@ -3361,6 +4288,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Unauthorized'
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
         '404':
           description: ''
           content:
@@ -3376,11 +4309,49 @@ paths:
       security:
       - {}
       - httpAuth1: []
+  /v1/users/list/roles:
+    get:
+      tags:
+      - User Accounts
+      description: List the recognized user account roles, e.g. ["Admin", "Maint",
+        "ReadOnly", "Locked"]. These are the values to use for `role`. A stored role
+        that isn't one of these is treated as ReadOnly.
+      operationId: userAccountRoles
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerError'
   /v1/users/role/{role}:
     get:
       tags:
       - User Accounts
-      description: Find all user accounts by role
+      description: Find all user accounts with a role. The role is matched exactly,
+        ignoring case; an unrecognized role returns an empty list. Accounts whose
+        stored role isn't recognized are treated as ReadOnly, so they're listed under
+        ReadOnly.
       operationId: userAccountsByRole
       parameters:
       - name: role
@@ -3396,7 +4367,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/UserAccount'
+                  $ref: '#/components/schemas/UserAccountInfo'
         '400':
           description: ''
           content:
@@ -3433,7 +4404,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserAccount'
+                $ref: '#/components/schemas/UserAccountInfo'
         '400':
           description: ''
           content:
@@ -3455,7 +4426,11 @@ paths:
     put:
       tags:
       - User Accounts
-      description: Update a user account
+      description: Update a user account. API key tokens and administrators can update
+        any account, including its role. Other users can update only their own account
+        and can't change its role (403 otherwise). Locked users can't update anything.
+        `role` must be a valid role (400 otherwise). Returns 404 if the account doesn't
+        exist.
       operationId: updateUserAccount
       parameters:
       - name: name
@@ -3475,7 +4450,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserAccount'
+                $ref: '#/components/schemas/UserAccountInfo'
         '400':
           description: ''
           content:
@@ -3488,6 +4463,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Unauthorized'
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
         '404':
           description: ''
           content:
@@ -3506,7 +4487,8 @@ paths:
     delete:
       tags:
       - User Accounts
-      description: Delete a user account by username
+      description: Delete a user account by username. Requires an API key token or
+        an administrator login.
       operationId: deleteUserAccount
       parameters:
       - name: name
@@ -3533,6 +4515,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Unauthorized'
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
         '404':
           description: ''
           content:
@@ -3562,7 +4550,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/UserAccount'
+                  $ref: '#/components/schemas/UserAccountInfo'
         '400':
           description: ''
           content:
@@ -3584,7 +4572,10 @@ paths:
     post:
       tags:
       - User Accounts
-      description: Create a new user account
+      description: Create a new user account. Accepts a JSON or form body. `role`
+        defaults to ReadOnly and must be a valid role (400 otherwise). Requires an
+        API key token, an administrator login, or a maintainer login; maintainers
+        can only create ReadOnly accounts (403 otherwise).
       operationId: createUserAccount
       requestBody:
         description: The user account to create. Accepts camelCase or snake_case.
@@ -3602,7 +4593,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserAccount'
+                $ref: '#/components/schemas/UserAccountInfo'
         '400':
           description: ''
           content:
@@ -3615,6 +4606,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Unauthorized'
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
         '404':
           description: ''
           content:
@@ -3820,6 +4817,18 @@ components:
           format: int64
         lastUpdated:
           type: string
+    Forbidden:
+      title: Forbidden
+      type: object
+      required:
+      - message
+      - responseCode
+      properties:
+        message:
+          type: string
+        responseCode:
+          type: integer
+          format: int32
     HealthStatus:
       title: HealthStatus
       type: object
@@ -4273,33 +5282,6 @@ components:
         responseCode:
           type: integer
           format: int32
-    UserAccount:
-      title: UserAccount
-      type: object
-      required:
-      - username
-      - password
-      - role
-      properties:
-        username:
-          type: string
-        password:
-          type: string
-        role:
-          type: string
-        affiliation:
-          type: string
-        firstName:
-          type: string
-        lastName:
-          type: string
-        email:
-          type: string
-        id:
-          type: integer
-          format: int64
-        isEncrypted:
-          type: boolean
     UserAccountCreate:
       title: UserAccountCreate
       type: object
@@ -4324,6 +5306,30 @@ components:
         first_name:
           type: string
         last_name:
+          type: string
+    UserAccountInfo:
+      title: UserAccountInfo
+      type: object
+      required:
+      - username
+      - role
+      properties:
+        username:
+          type: string
+        role:
+          type: string
+        affiliation:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+        id:
+          type: integer
+          format: int64
+        lastUpdated:
           type: string
     UserAccountUpdate:
       title: UserAccountUpdate

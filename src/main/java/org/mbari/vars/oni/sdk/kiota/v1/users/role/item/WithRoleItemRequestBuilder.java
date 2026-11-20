@@ -35,7 +35,7 @@ import java.util.Objects;
 import org.mbari.vars.oni.sdk.kiota.models.BadRequest;
 import org.mbari.vars.oni.sdk.kiota.models.NotFound;
 import org.mbari.vars.oni.sdk.kiota.models.ServerError;
-import org.mbari.vars.oni.sdk.kiota.models.UserAccount;
+import org.mbari.vars.oni.sdk.kiota.models.UserAccountInfo;
 /**
  * Builds and executes requests for operations under /v1/users/role/{role}
  */
@@ -58,35 +58,35 @@ public class WithRoleItemRequestBuilder extends BaseRequestBuilder {
         super(requestAdapter, "{+baseurl}/v1/users/role/{role}", rawUrl);
     }
     /**
-     * Find all user accounts by role
-     * @return a {@link java.util.List<UserAccount>}
+     * Find all user accounts with a role. The role is matched exactly, ignoring case; an unrecognized role returns an empty list. Accounts whose stored role isn&apos;t recognized are treated as ReadOnly, so they&apos;re listed under ReadOnly.
+     * @return a {@link java.util.List<UserAccountInfo>}
      * @throws BadRequest When receiving a 400 status code
      * @throws NotFound When receiving a 404 status code
      * @throws ServerError When receiving a 500 status code
      */
     @jakarta.annotation.Nullable
-    public java.util.List<UserAccount> get() {
+    public java.util.List<UserAccountInfo> get() {
         return get(null);
     }
     /**
-     * Find all user accounts by role
+     * Find all user accounts with a role. The role is matched exactly, ignoring case; an unrecognized role returns an empty list. Accounts whose stored role isn&apos;t recognized are treated as ReadOnly, so they&apos;re listed under ReadOnly.
      * @param requestConfiguration Configuration for the request such as headers, query parameters, and middleware options.
-     * @return a {@link java.util.List<UserAccount>}
+     * @return a {@link java.util.List<UserAccountInfo>}
      * @throws BadRequest When receiving a 400 status code
      * @throws NotFound When receiving a 404 status code
      * @throws ServerError When receiving a 500 status code
      */
     @jakarta.annotation.Nullable
-    public java.util.List<UserAccount> get(@jakarta.annotation.Nullable final java.util.function.Consumer<GetRequestConfiguration> requestConfiguration) {
+    public java.util.List<UserAccountInfo> get(@jakarta.annotation.Nullable final java.util.function.Consumer<GetRequestConfiguration> requestConfiguration) {
         final RequestInformation requestInfo = toGetRequestInformation(requestConfiguration);
         final HashMap<String, ParsableFactory<? extends Parsable>> errorMapping = new HashMap<String, ParsableFactory<? extends Parsable>>();
         errorMapping.put("400", BadRequest::createFromDiscriminatorValue);
         errorMapping.put("404", NotFound::createFromDiscriminatorValue);
         errorMapping.put("500", ServerError::createFromDiscriminatorValue);
-        return this.requestAdapter.sendCollection(requestInfo, errorMapping, UserAccount::createFromDiscriminatorValue);
+        return this.requestAdapter.sendCollection(requestInfo, errorMapping, UserAccountInfo::createFromDiscriminatorValue);
     }
     /**
-     * Find all user accounts by role
+     * Find all user accounts with a role. The role is matched exactly, ignoring case; an unrecognized role returns an empty list. Accounts whose stored role isn&apos;t recognized are treated as ReadOnly, so they&apos;re listed under ReadOnly.
      * @return a {@link RequestInformation}
      */
     @jakarta.annotation.Nonnull
@@ -94,7 +94,7 @@ public class WithRoleItemRequestBuilder extends BaseRequestBuilder {
         return toGetRequestInformation(null);
     }
     /**
-     * Find all user accounts by role
+     * Find all user accounts with a role. The role is matched exactly, ignoring case; an unrecognized role returns an empty list. Accounts whose stored role isn&apos;t recognized are treated as ReadOnly, so they&apos;re listed under ReadOnly.
      * @param requestConfiguration Configuration for the request such as headers, query parameters, and middleware options.
      * @return a {@link RequestInformation}
      */

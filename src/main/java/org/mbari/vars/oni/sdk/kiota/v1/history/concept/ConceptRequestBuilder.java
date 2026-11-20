@@ -24,7 +24,7 @@ import com.microsoft.kiota.BaseRequestBuilder;
 import com.microsoft.kiota.RequestAdapter;
 import java.util.HashMap;
 import java.util.Objects;
-import org.mbari.vars.oni.sdk.kiota.v1.history.concept.item.WithP1ItemRequestBuilder;
+import org.mbari.vars.oni.sdk.kiota.v1.history.concept.item.WithConceptNameItemRequestBuilder;
 /**
  * Builds and executes requests for operations under /v1/history/concept
  */
@@ -32,15 +32,15 @@ import org.mbari.vars.oni.sdk.kiota.v1.history.concept.item.WithP1ItemRequestBui
 public class ConceptRequestBuilder extends BaseRequestBuilder {
     /**
      * Gets an item from the org.mbari.vars.oni.sdk.kiota.v1.history.concept.item collection
-     * @param p1 Unique identifier of the item
-     * @return a {@link WithP1ItemRequestBuilder}
+     * @param conceptName Unique identifier of the item
+     * @return a {@link WithConceptNameItemRequestBuilder}
      */
     @jakarta.annotation.Nonnull
-    public WithP1ItemRequestBuilder byP1(@jakarta.annotation.Nonnull final String p1) {
-        Objects.requireNonNull(p1);
+    public WithConceptNameItemRequestBuilder byConceptName(@jakarta.annotation.Nonnull final String conceptName) {
+        Objects.requireNonNull(conceptName);
         final HashMap<String, Object> urlTplParams = new HashMap<String, Object>(this.pathParameters);
-        urlTplParams.put("p1", p1);
-        return new WithP1ItemRequestBuilder(urlTplParams, requestAdapter);
+        urlTplParams.put("conceptName", conceptName);
+        return new WithConceptNameItemRequestBuilder(urlTplParams, requestAdapter);
     }
     /**
      * Instantiates a new {@link ConceptRequestBuilder} and sets the default values.

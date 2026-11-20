@@ -35,6 +35,7 @@ import java.util.Objects;
 import org.mbari.vars.oni.sdk.kiota.models.BadRequest;
 import org.mbari.vars.oni.sdk.kiota.models.ConceptMetadata;
 import org.mbari.vars.oni.sdk.kiota.models.ConceptUpdate;
+import org.mbari.vars.oni.sdk.kiota.models.Forbidden;
 import org.mbari.vars.oni.sdk.kiota.models.NotFound;
 import org.mbari.vars.oni.sdk.kiota.models.ServerError;
 import org.mbari.vars.oni.sdk.kiota.models.Unauthorized;
@@ -60,10 +61,11 @@ public class WithNameItemRequestBuilder extends BaseRequestBuilder {
         super(requestAdapter, "{+baseurl}/v1/concept/{name}", rawUrl);
     }
     /**
-     * Delete a concept
+     * Delete a concept and all its descendants by name. Requires an administrator or maintainer login. Administrators delete immediately; other users create a pending delete that must be approved by an administrator.
      * @return a {@link WithNameDeleteResponse}
      * @throws BadRequest When receiving a 400 status code
      * @throws Unauthorized When receiving a 401 status code
+     * @throws Forbidden When receiving a 403 status code
      * @throws NotFound When receiving a 404 status code
      * @throws ServerError When receiving a 500 status code
      */
@@ -72,11 +74,12 @@ public class WithNameItemRequestBuilder extends BaseRequestBuilder {
         return delete(null);
     }
     /**
-     * Delete a concept
+     * Delete a concept and all its descendants by name. Requires an administrator or maintainer login. Administrators delete immediately; other users create a pending delete that must be approved by an administrator.
      * @param requestConfiguration Configuration for the request such as headers, query parameters, and middleware options.
      * @return a {@link WithNameDeleteResponse}
      * @throws BadRequest When receiving a 400 status code
      * @throws Unauthorized When receiving a 401 status code
+     * @throws Forbidden When receiving a 403 status code
      * @throws NotFound When receiving a 404 status code
      * @throws ServerError When receiving a 500 status code
      */
@@ -86,12 +89,13 @@ public class WithNameItemRequestBuilder extends BaseRequestBuilder {
         final HashMap<String, ParsableFactory<? extends Parsable>> errorMapping = new HashMap<String, ParsableFactory<? extends Parsable>>();
         errorMapping.put("400", BadRequest::createFromDiscriminatorValue);
         errorMapping.put("401", Unauthorized::createFromDiscriminatorValue);
+        errorMapping.put("403", Forbidden::createFromDiscriminatorValue);
         errorMapping.put("404", NotFound::createFromDiscriminatorValue);
         errorMapping.put("500", ServerError::createFromDiscriminatorValue);
         return this.requestAdapter.send(requestInfo, errorMapping, WithNameDeleteResponse::createFromDiscriminatorValue);
     }
     /**
-     * Find a concept by name
+     * Find a concept by any of its names (primary or alternate)
      * @return a {@link ConceptMetadata}
      * @throws BadRequest When receiving a 400 status code
      * @throws NotFound When receiving a 404 status code
@@ -102,7 +106,7 @@ public class WithNameItemRequestBuilder extends BaseRequestBuilder {
         return get(null);
     }
     /**
-     * Find a concept by name
+     * Find a concept by any of its names (primary or alternate)
      * @param requestConfiguration Configuration for the request such as headers, query parameters, and middleware options.
      * @return a {@link ConceptMetadata}
      * @throws BadRequest When receiving a 400 status code
@@ -119,11 +123,12 @@ public class WithNameItemRequestBuilder extends BaseRequestBuilder {
         return this.requestAdapter.send(requestInfo, errorMapping, ConceptMetadata::createFromDiscriminatorValue);
     }
     /**
-     * Update a concept. To remove a rank name or level, set it to an empty string. Only administrators can remove rank names and levels.
+     * Update a concept by name. Set `parentName` to move the concept; it cannot be moved under itself or one of its descendants, and the root cannot be given a parent (400). An invalid rank or an aphiaId already used by another concept returns 400. To remove a rank name or level, set it to an empty string; only administrators can remove them (403 otherwise). Requires an administrator or maintainer login. Maintainer changes are applied and recorded as pending history for an administrator to approve or reject.
      * @param body The request body
      * @return a {@link ConceptMetadata}
      * @throws BadRequest When receiving a 400 status code
      * @throws Unauthorized When receiving a 401 status code
+     * @throws Forbidden When receiving a 403 status code
      * @throws NotFound When receiving a 404 status code
      * @throws ServerError When receiving a 500 status code
      */
@@ -132,12 +137,13 @@ public class WithNameItemRequestBuilder extends BaseRequestBuilder {
         return put(body, null);
     }
     /**
-     * Update a concept. To remove a rank name or level, set it to an empty string. Only administrators can remove rank names and levels.
+     * Update a concept by name. Set `parentName` to move the concept; it cannot be moved under itself or one of its descendants, and the root cannot be given a parent (400). An invalid rank or an aphiaId already used by another concept returns 400. To remove a rank name or level, set it to an empty string; only administrators can remove them (403 otherwise). Requires an administrator or maintainer login. Maintainer changes are applied and recorded as pending history for an administrator to approve or reject.
      * @param body The request body
      * @param requestConfiguration Configuration for the request such as headers, query parameters, and middleware options.
      * @return a {@link ConceptMetadata}
      * @throws BadRequest When receiving a 400 status code
      * @throws Unauthorized When receiving a 401 status code
+     * @throws Forbidden When receiving a 403 status code
      * @throws NotFound When receiving a 404 status code
      * @throws ServerError When receiving a 500 status code
      */
@@ -148,12 +154,13 @@ public class WithNameItemRequestBuilder extends BaseRequestBuilder {
         final HashMap<String, ParsableFactory<? extends Parsable>> errorMapping = new HashMap<String, ParsableFactory<? extends Parsable>>();
         errorMapping.put("400", BadRequest::createFromDiscriminatorValue);
         errorMapping.put("401", Unauthorized::createFromDiscriminatorValue);
+        errorMapping.put("403", Forbidden::createFromDiscriminatorValue);
         errorMapping.put("404", NotFound::createFromDiscriminatorValue);
         errorMapping.put("500", ServerError::createFromDiscriminatorValue);
         return this.requestAdapter.send(requestInfo, errorMapping, ConceptMetadata::createFromDiscriminatorValue);
     }
     /**
-     * Delete a concept
+     * Delete a concept and all its descendants by name. Requires an administrator or maintainer login. Administrators delete immediately; other users create a pending delete that must be approved by an administrator.
      * @return a {@link RequestInformation}
      */
     @jakarta.annotation.Nonnull
@@ -161,7 +168,7 @@ public class WithNameItemRequestBuilder extends BaseRequestBuilder {
         return toDeleteRequestInformation(null);
     }
     /**
-     * Delete a concept
+     * Delete a concept and all its descendants by name. Requires an administrator or maintainer login. Administrators delete immediately; other users create a pending delete that must be approved by an administrator.
      * @param requestConfiguration Configuration for the request such as headers, query parameters, and middleware options.
      * @return a {@link RequestInformation}
      */
@@ -173,7 +180,7 @@ public class WithNameItemRequestBuilder extends BaseRequestBuilder {
         return requestInfo;
     }
     /**
-     * Find a concept by name
+     * Find a concept by any of its names (primary or alternate)
      * @return a {@link RequestInformation}
      */
     @jakarta.annotation.Nonnull
@@ -181,7 +188,7 @@ public class WithNameItemRequestBuilder extends BaseRequestBuilder {
         return toGetRequestInformation(null);
     }
     /**
-     * Find a concept by name
+     * Find a concept by any of its names (primary or alternate)
      * @param requestConfiguration Configuration for the request such as headers, query parameters, and middleware options.
      * @return a {@link RequestInformation}
      */
@@ -193,7 +200,7 @@ public class WithNameItemRequestBuilder extends BaseRequestBuilder {
         return requestInfo;
     }
     /**
-     * Update a concept. To remove a rank name or level, set it to an empty string. Only administrators can remove rank names and levels.
+     * Update a concept by name. Set `parentName` to move the concept; it cannot be moved under itself or one of its descendants, and the root cannot be given a parent (400). An invalid rank or an aphiaId already used by another concept returns 400. To remove a rank name or level, set it to an empty string; only administrators can remove them (403 otherwise). Requires an administrator or maintainer login. Maintainer changes are applied and recorded as pending history for an administrator to approve or reject.
      * @param body The request body
      * @return a {@link RequestInformation}
      */
@@ -202,7 +209,7 @@ public class WithNameItemRequestBuilder extends BaseRequestBuilder {
         return toPutRequestInformation(body, null);
     }
     /**
-     * Update a concept. To remove a rank name or level, set it to an empty string. Only administrators can remove rank names and levels.
+     * Update a concept by name. Set `parentName` to move the concept; it cannot be moved under itself or one of its descendants, and the root cannot be given a parent (400). An invalid rank or an aphiaId already used by another concept returns 400. To remove a rank name or level, set it to an empty string; only administrators can remove them (403 otherwise). Requires an administrator or maintainer login. Maintainer changes are applied and recorded as pending history for an administrator to approve or reject.
      * @param body The request body
      * @param requestConfiguration Configuration for the request such as headers, query parameters, and middleware options.
      * @return a {@link RequestInformation}

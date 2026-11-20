@@ -58,7 +58,7 @@ public class RanksRequestBuilder extends BaseRequestBuilder {
         super(requestAdapter, "{+baseurl}/v1/concept/ranks", rawUrl);
     }
     /**
-     * List valid ranks
+     * List the valid rank level and rank name combinations
      * @return a {@link java.util.List<Rank>}
      * @throws BadRequest When receiving a 400 status code
      * @throws NotFound When receiving a 404 status code
@@ -69,7 +69,7 @@ public class RanksRequestBuilder extends BaseRequestBuilder {
         return get(null);
     }
     /**
-     * List valid ranks
+     * List the valid rank level and rank name combinations
      * @param requestConfiguration Configuration for the request such as headers, query parameters, and middleware options.
      * @return a {@link java.util.List<Rank>}
      * @throws BadRequest When receiving a 400 status code
@@ -86,7 +86,7 @@ public class RanksRequestBuilder extends BaseRequestBuilder {
         return this.requestAdapter.sendCollection(requestInfo, errorMapping, Rank::createFromDiscriminatorValue);
     }
     /**
-     * List valid ranks
+     * List the valid rank level and rank name combinations
      * @return a {@link RequestInformation}
      */
     @jakarta.annotation.Nonnull
@@ -94,7 +94,7 @@ public class RanksRequestBuilder extends BaseRequestBuilder {
         return toGetRequestInformation(null);
     }
     /**
-     * List valid ranks
+     * List the valid rank level and rank name combinations
      * @param requestConfiguration Configuration for the request such as headers, query parameters, and middleware options.
      * @return a {@link RequestInformation}
      */

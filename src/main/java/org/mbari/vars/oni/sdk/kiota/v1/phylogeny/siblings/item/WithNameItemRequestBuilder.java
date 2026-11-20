@@ -58,6 +58,7 @@ public class WithNameItemRequestBuilder extends BaseRequestBuilder {
         super(requestAdapter, "{+baseurl}/v1/phylogeny/siblings/{name}", rawUrl);
     }
     /**
+     * Find the siblings of a concept: the children of its parent, including the concept itself
      * @return a {@link java.util.List<SerdeConcept>}
      * @throws BadRequest When receiving a 400 status code
      * @throws NotFound When receiving a 404 status code
@@ -68,6 +69,7 @@ public class WithNameItemRequestBuilder extends BaseRequestBuilder {
         return get(null);
     }
     /**
+     * Find the siblings of a concept: the children of its parent, including the concept itself
      * @param requestConfiguration Configuration for the request such as headers, query parameters, and middleware options.
      * @return a {@link java.util.List<SerdeConcept>}
      * @throws BadRequest When receiving a 400 status code
@@ -84,6 +86,7 @@ public class WithNameItemRequestBuilder extends BaseRequestBuilder {
         return this.requestAdapter.sendCollection(requestInfo, errorMapping, SerdeConcept::createFromDiscriminatorValue);
     }
     /**
+     * Find the siblings of a concept: the children of its parent, including the concept itself
      * @return a {@link RequestInformation}
      */
     @jakarta.annotation.Nonnull
@@ -91,6 +94,7 @@ public class WithNameItemRequestBuilder extends BaseRequestBuilder {
         return toGetRequestInformation(null);
     }
     /**
+     * Find the siblings of a concept: the children of its parent, including the concept itself
      * @param requestConfiguration Configuration for the request such as headers, query parameters, and middleware options.
      * @return a {@link RequestInformation}
      */

@@ -34,6 +34,7 @@ import java.util.Map;
 import java.util.Objects;
 import org.mbari.vars.oni.sdk.kiota.models.BadRequest;
 import org.mbari.vars.oni.sdk.kiota.models.ConceptNameUpdate;
+import org.mbari.vars.oni.sdk.kiota.models.Forbidden;
 import org.mbari.vars.oni.sdk.kiota.models.NotFound;
 import org.mbari.vars.oni.sdk.kiota.models.RawConcept;
 import org.mbari.vars.oni.sdk.kiota.models.ServerError;
@@ -60,10 +61,11 @@ public class WithNameItemRequestBuilder extends BaseRequestBuilder {
         super(requestAdapter, "{+baseurl}/v1/names/{name}", rawUrl);
     }
     /**
-     * Delete a concept name
+     * Delete a concept name. Primary names cannot be deleted (400). Requires an administrator or maintainer login. Administrators delete immediately; other users create a pending delete that must be approved by an administrator.
      * @return a {@link RawConcept}
      * @throws BadRequest When receiving a 400 status code
      * @throws Unauthorized When receiving a 401 status code
+     * @throws Forbidden When receiving a 403 status code
      * @throws NotFound When receiving a 404 status code
      * @throws ServerError When receiving a 500 status code
      */
@@ -72,11 +74,12 @@ public class WithNameItemRequestBuilder extends BaseRequestBuilder {
         return delete(null);
     }
     /**
-     * Delete a concept name
+     * Delete a concept name. Primary names cannot be deleted (400). Requires an administrator or maintainer login. Administrators delete immediately; other users create a pending delete that must be approved by an administrator.
      * @param requestConfiguration Configuration for the request such as headers, query parameters, and middleware options.
      * @return a {@link RawConcept}
      * @throws BadRequest When receiving a 400 status code
      * @throws Unauthorized When receiving a 401 status code
+     * @throws Forbidden When receiving a 403 status code
      * @throws NotFound When receiving a 404 status code
      * @throws ServerError When receiving a 500 status code
      */
@@ -86,12 +89,13 @@ public class WithNameItemRequestBuilder extends BaseRequestBuilder {
         final HashMap<String, ParsableFactory<? extends Parsable>> errorMapping = new HashMap<String, ParsableFactory<? extends Parsable>>();
         errorMapping.put("400", BadRequest::createFromDiscriminatorValue);
         errorMapping.put("401", Unauthorized::createFromDiscriminatorValue);
+        errorMapping.put("403", Forbidden::createFromDiscriminatorValue);
         errorMapping.put("404", NotFound::createFromDiscriminatorValue);
         errorMapping.put("500", ServerError::createFromDiscriminatorValue);
         return this.requestAdapter.send(requestInfo, errorMapping, RawConcept::createFromDiscriminatorValue);
     }
     /**
-     * Find a concept name
+     * Find the concept that owns a concept name
      * @return a {@link RawConcept}
      * @throws BadRequest When receiving a 400 status code
      * @throws NotFound When receiving a 404 status code
@@ -102,7 +106,7 @@ public class WithNameItemRequestBuilder extends BaseRequestBuilder {
         return get(null);
     }
     /**
-     * Find a concept name
+     * Find the concept that owns a concept name
      * @param requestConfiguration Configuration for the request such as headers, query parameters, and middleware options.
      * @return a {@link RawConcept}
      * @throws BadRequest When receiving a 400 status code
@@ -119,11 +123,12 @@ public class WithNameItemRequestBuilder extends BaseRequestBuilder {
         return this.requestAdapter.send(requestInfo, errorMapping, RawConcept::createFromDiscriminatorValue);
     }
     /**
-     * Update a concept name. To remove the author, set it to an empty string
+     * Update a concept name. Rename it (`newName`, 400 if that name already exists), change its type, or change its author (set `author` to an empty string to remove it). A primary name cannot be changed to another type (400). Requires an administrator or maintainer login. Maintainer changes are applied and recorded as pending history.
      * @param body The request body
      * @return a {@link RawConcept}
      * @throws BadRequest When receiving a 400 status code
      * @throws Unauthorized When receiving a 401 status code
+     * @throws Forbidden When receiving a 403 status code
      * @throws NotFound When receiving a 404 status code
      * @throws ServerError When receiving a 500 status code
      */
@@ -132,12 +137,13 @@ public class WithNameItemRequestBuilder extends BaseRequestBuilder {
         return put(body, null);
     }
     /**
-     * Update a concept name. To remove the author, set it to an empty string
+     * Update a concept name. Rename it (`newName`, 400 if that name already exists), change its type, or change its author (set `author` to an empty string to remove it). A primary name cannot be changed to another type (400). Requires an administrator or maintainer login. Maintainer changes are applied and recorded as pending history.
      * @param body The request body
      * @param requestConfiguration Configuration for the request such as headers, query parameters, and middleware options.
      * @return a {@link RawConcept}
      * @throws BadRequest When receiving a 400 status code
      * @throws Unauthorized When receiving a 401 status code
+     * @throws Forbidden When receiving a 403 status code
      * @throws NotFound When receiving a 404 status code
      * @throws ServerError When receiving a 500 status code
      */
@@ -148,12 +154,13 @@ public class WithNameItemRequestBuilder extends BaseRequestBuilder {
         final HashMap<String, ParsableFactory<? extends Parsable>> errorMapping = new HashMap<String, ParsableFactory<? extends Parsable>>();
         errorMapping.put("400", BadRequest::createFromDiscriminatorValue);
         errorMapping.put("401", Unauthorized::createFromDiscriminatorValue);
+        errorMapping.put("403", Forbidden::createFromDiscriminatorValue);
         errorMapping.put("404", NotFound::createFromDiscriminatorValue);
         errorMapping.put("500", ServerError::createFromDiscriminatorValue);
         return this.requestAdapter.send(requestInfo, errorMapping, RawConcept::createFromDiscriminatorValue);
     }
     /**
-     * Delete a concept name
+     * Delete a concept name. Primary names cannot be deleted (400). Requires an administrator or maintainer login. Administrators delete immediately; other users create a pending delete that must be approved by an administrator.
      * @return a {@link RequestInformation}
      */
     @jakarta.annotation.Nonnull
@@ -161,7 +168,7 @@ public class WithNameItemRequestBuilder extends BaseRequestBuilder {
         return toDeleteRequestInformation(null);
     }
     /**
-     * Delete a concept name
+     * Delete a concept name. Primary names cannot be deleted (400). Requires an administrator or maintainer login. Administrators delete immediately; other users create a pending delete that must be approved by an administrator.
      * @param requestConfiguration Configuration for the request such as headers, query parameters, and middleware options.
      * @return a {@link RequestInformation}
      */
@@ -173,7 +180,7 @@ public class WithNameItemRequestBuilder extends BaseRequestBuilder {
         return requestInfo;
     }
     /**
-     * Find a concept name
+     * Find the concept that owns a concept name
      * @return a {@link RequestInformation}
      */
     @jakarta.annotation.Nonnull
@@ -181,7 +188,7 @@ public class WithNameItemRequestBuilder extends BaseRequestBuilder {
         return toGetRequestInformation(null);
     }
     /**
-     * Find a concept name
+     * Find the concept that owns a concept name
      * @param requestConfiguration Configuration for the request such as headers, query parameters, and middleware options.
      * @return a {@link RequestInformation}
      */
@@ -193,7 +200,7 @@ public class WithNameItemRequestBuilder extends BaseRequestBuilder {
         return requestInfo;
     }
     /**
-     * Update a concept name. To remove the author, set it to an empty string
+     * Update a concept name. Rename it (`newName`, 400 if that name already exists), change its type, or change its author (set `author` to an empty string to remove it). A primary name cannot be changed to another type (400). Requires an administrator or maintainer login. Maintainer changes are applied and recorded as pending history.
      * @param body The request body
      * @return a {@link RequestInformation}
      */
@@ -202,7 +209,7 @@ public class WithNameItemRequestBuilder extends BaseRequestBuilder {
         return toPutRequestInformation(body, null);
     }
     /**
-     * Update a concept name. To remove the author, set it to an empty string
+     * Update a concept name. Rename it (`newName`, 400 if that name already exists), change its type, or change its author (set `author` to an empty string to remove it). A primary name cannot be changed to another type (400). Requires an administrator or maintainer login. Maintainer changes are applied and recorded as pending history.
      * @param body The request body
      * @param requestConfiguration Configuration for the request such as headers, query parameters, and middleware options.
      * @return a {@link RequestInformation}

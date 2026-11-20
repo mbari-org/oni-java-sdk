@@ -58,7 +58,7 @@ public class WithNameItemRequestBuilder extends BaseRequestBuilder {
         super(requestAdapter, "{+baseurl}/v1/concept/parent/{name}", rawUrl);
     }
     /**
-     * Find the parent of a concept
+     * Find the parent of a concept. Returns 404 for the root concept
      * @return a {@link ConceptMetadata}
      * @throws BadRequest When receiving a 400 status code
      * @throws NotFound When receiving a 404 status code
@@ -69,7 +69,7 @@ public class WithNameItemRequestBuilder extends BaseRequestBuilder {
         return get(null);
     }
     /**
-     * Find the parent of a concept
+     * Find the parent of a concept. Returns 404 for the root concept
      * @param requestConfiguration Configuration for the request such as headers, query parameters, and middleware options.
      * @return a {@link ConceptMetadata}
      * @throws BadRequest When receiving a 400 status code
@@ -86,7 +86,7 @@ public class WithNameItemRequestBuilder extends BaseRequestBuilder {
         return this.requestAdapter.send(requestInfo, errorMapping, ConceptMetadata::createFromDiscriminatorValue);
     }
     /**
-     * Find the parent of a concept
+     * Find the parent of a concept. Returns 404 for the root concept
      * @return a {@link RequestInformation}
      */
     @jakarta.annotation.Nonnull
@@ -94,7 +94,7 @@ public class WithNameItemRequestBuilder extends BaseRequestBuilder {
         return toGetRequestInformation(null);
     }
     /**
-     * Find the parent of a concept
+     * Find the parent of a concept. Returns 404 for the root concept
      * @param requestConfiguration Configuration for the request such as headers, query parameters, and middleware options.
      * @return a {@link RequestInformation}
      */

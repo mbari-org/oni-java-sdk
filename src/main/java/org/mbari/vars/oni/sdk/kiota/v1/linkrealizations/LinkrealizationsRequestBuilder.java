@@ -35,6 +35,7 @@ import java.util.Map;
 import java.util.Objects;
 import org.mbari.vars.oni.sdk.kiota.models.BadRequest;
 import org.mbari.vars.oni.sdk.kiota.models.ExtendedLink;
+import org.mbari.vars.oni.sdk.kiota.models.Forbidden;
 import org.mbari.vars.oni.sdk.kiota.models.LinkCreate;
 import org.mbari.vars.oni.sdk.kiota.models.NotFound;
 import org.mbari.vars.oni.sdk.kiota.models.PageSeqExtendedLink;
@@ -45,6 +46,7 @@ import org.mbari.vars.oni.sdk.kiota.v1.linkrealizations.count.CountRequestBuilde
 import org.mbari.vars.oni.sdk.kiota.v1.linkrealizations.item.LinkrealizationsItemRequestBuilder;
 import org.mbari.vars.oni.sdk.kiota.v1.linkrealizations.prototype.PrototypeRequestBuilder;
 import org.mbari.vars.oni.sdk.kiota.v1.linkrealizations.query.QueryRequestBuilder;
+import org.mbari.vars.oni.sdk.kiota.v1.linkrealizations.toconcept.ToconceptRequestBuilder;
 /**
  * Builds and executes requests for operations under /v1/linkrealizations
  */
@@ -81,6 +83,14 @@ public class LinkrealizationsRequestBuilder extends BaseRequestBuilder {
     @jakarta.annotation.Nonnull
     public QueryRequestBuilder query() {
         return new QueryRequestBuilder(pathParameters, requestAdapter);
+    }
+    /**
+     * The toconcept property
+     * @return a {@link ToconceptRequestBuilder}
+     */
+    @jakarta.annotation.Nonnull
+    public ToconceptRequestBuilder toconcept() {
+        return new ToconceptRequestBuilder(pathParameters, requestAdapter);
     }
     /**
      * Gets an item from the org.mbari.vars.oni.sdk.kiota.v1.linkrealizations.item collection
@@ -139,11 +149,12 @@ public class LinkrealizationsRequestBuilder extends BaseRequestBuilder {
         return this.requestAdapter.send(requestInfo, errorMapping, PageSeqExtendedLink::createFromDiscriminatorValue);
     }
     /**
-     * Create a new link realization
+     * Create a new link realization on a concept. Requires an administrator or maintainer login. Maintainer changes are applied and recorded as pending history.
      * @param body The request body
      * @return a {@link ExtendedLink}
      * @throws BadRequest When receiving a 400 status code
      * @throws Unauthorized When receiving a 401 status code
+     * @throws Forbidden When receiving a 403 status code
      * @throws NotFound When receiving a 404 status code
      * @throws ServerError When receiving a 500 status code
      */
@@ -152,12 +163,13 @@ public class LinkrealizationsRequestBuilder extends BaseRequestBuilder {
         return post(body, null);
     }
     /**
-     * Create a new link realization
+     * Create a new link realization on a concept. Requires an administrator or maintainer login. Maintainer changes are applied and recorded as pending history.
      * @param body The request body
      * @param requestConfiguration Configuration for the request such as headers, query parameters, and middleware options.
      * @return a {@link ExtendedLink}
      * @throws BadRequest When receiving a 400 status code
      * @throws Unauthorized When receiving a 401 status code
+     * @throws Forbidden When receiving a 403 status code
      * @throws NotFound When receiving a 404 status code
      * @throws ServerError When receiving a 500 status code
      */
@@ -168,6 +180,7 @@ public class LinkrealizationsRequestBuilder extends BaseRequestBuilder {
         final HashMap<String, ParsableFactory<? extends Parsable>> errorMapping = new HashMap<String, ParsableFactory<? extends Parsable>>();
         errorMapping.put("400", BadRequest::createFromDiscriminatorValue);
         errorMapping.put("401", Unauthorized::createFromDiscriminatorValue);
+        errorMapping.put("403", Forbidden::createFromDiscriminatorValue);
         errorMapping.put("404", NotFound::createFromDiscriminatorValue);
         errorMapping.put("500", ServerError::createFromDiscriminatorValue);
         return this.requestAdapter.send(requestInfo, errorMapping, ExtendedLink::createFromDiscriminatorValue);
@@ -193,7 +206,7 @@ public class LinkrealizationsRequestBuilder extends BaseRequestBuilder {
         return requestInfo;
     }
     /**
-     * Create a new link realization
+     * Create a new link realization on a concept. Requires an administrator or maintainer login. Maintainer changes are applied and recorded as pending history.
      * @param body The request body
      * @return a {@link RequestInformation}
      */
@@ -202,7 +215,7 @@ public class LinkrealizationsRequestBuilder extends BaseRequestBuilder {
         return toPostRequestInformation(body, null);
     }
     /**
-     * Create a new link realization
+     * Create a new link realization on a concept. Requires an administrator or maintainer login. Maintainer changes are applied and recorded as pending history.
      * @param body The request body
      * @param requestConfiguration Configuration for the request such as headers, query parameters, and middleware options.
      * @return a {@link RequestInformation}

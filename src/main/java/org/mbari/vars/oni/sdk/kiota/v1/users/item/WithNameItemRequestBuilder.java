@@ -33,10 +33,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import org.mbari.vars.oni.sdk.kiota.models.BadRequest;
+import org.mbari.vars.oni.sdk.kiota.models.Forbidden;
 import org.mbari.vars.oni.sdk.kiota.models.NotFound;
 import org.mbari.vars.oni.sdk.kiota.models.ServerError;
 import org.mbari.vars.oni.sdk.kiota.models.Unauthorized;
-import org.mbari.vars.oni.sdk.kiota.models.UserAccount;
+import org.mbari.vars.oni.sdk.kiota.models.UserAccountInfo;
 import org.mbari.vars.oni.sdk.kiota.models.UserAccountUpdate;
 /**
  * Builds and executes requests for operations under /v1/users/{name}
@@ -60,10 +61,11 @@ public class WithNameItemRequestBuilder extends BaseRequestBuilder {
         super(requestAdapter, "{+baseurl}/v1/users/{name}", rawUrl);
     }
     /**
-     * Delete a user account by username
+     * Delete a user account by username. Requires an API key token or an administrator login.
      * @return a {@link WithNameDeleteResponse}
      * @throws BadRequest When receiving a 400 status code
      * @throws Unauthorized When receiving a 401 status code
+     * @throws Forbidden When receiving a 403 status code
      * @throws NotFound When receiving a 404 status code
      * @throws ServerError When receiving a 500 status code
      */
@@ -72,11 +74,12 @@ public class WithNameItemRequestBuilder extends BaseRequestBuilder {
         return delete(null);
     }
     /**
-     * Delete a user account by username
+     * Delete a user account by username. Requires an API key token or an administrator login.
      * @param requestConfiguration Configuration for the request such as headers, query parameters, and middleware options.
      * @return a {@link WithNameDeleteResponse}
      * @throws BadRequest When receiving a 400 status code
      * @throws Unauthorized When receiving a 401 status code
+     * @throws Forbidden When receiving a 403 status code
      * @throws NotFound When receiving a 404 status code
      * @throws ServerError When receiving a 500 status code
      */
@@ -86,74 +89,78 @@ public class WithNameItemRequestBuilder extends BaseRequestBuilder {
         final HashMap<String, ParsableFactory<? extends Parsable>> errorMapping = new HashMap<String, ParsableFactory<? extends Parsable>>();
         errorMapping.put("400", BadRequest::createFromDiscriminatorValue);
         errorMapping.put("401", Unauthorized::createFromDiscriminatorValue);
+        errorMapping.put("403", Forbidden::createFromDiscriminatorValue);
         errorMapping.put("404", NotFound::createFromDiscriminatorValue);
         errorMapping.put("500", ServerError::createFromDiscriminatorValue);
         return this.requestAdapter.send(requestInfo, errorMapping, WithNameDeleteResponse::createFromDiscriminatorValue);
     }
     /**
      * Find a user account by username
-     * @return a {@link UserAccount}
+     * @return a {@link UserAccountInfo}
      * @throws BadRequest When receiving a 400 status code
      * @throws NotFound When receiving a 404 status code
      * @throws ServerError When receiving a 500 status code
      */
     @jakarta.annotation.Nullable
-    public UserAccount get() {
+    public UserAccountInfo get() {
         return get(null);
     }
     /**
      * Find a user account by username
      * @param requestConfiguration Configuration for the request such as headers, query parameters, and middleware options.
-     * @return a {@link UserAccount}
+     * @return a {@link UserAccountInfo}
      * @throws BadRequest When receiving a 400 status code
      * @throws NotFound When receiving a 404 status code
      * @throws ServerError When receiving a 500 status code
      */
     @jakarta.annotation.Nullable
-    public UserAccount get(@jakarta.annotation.Nullable final java.util.function.Consumer<GetRequestConfiguration> requestConfiguration) {
+    public UserAccountInfo get(@jakarta.annotation.Nullable final java.util.function.Consumer<GetRequestConfiguration> requestConfiguration) {
         final RequestInformation requestInfo = toGetRequestInformation(requestConfiguration);
         final HashMap<String, ParsableFactory<? extends Parsable>> errorMapping = new HashMap<String, ParsableFactory<? extends Parsable>>();
         errorMapping.put("400", BadRequest::createFromDiscriminatorValue);
         errorMapping.put("404", NotFound::createFromDiscriminatorValue);
         errorMapping.put("500", ServerError::createFromDiscriminatorValue);
-        return this.requestAdapter.send(requestInfo, errorMapping, UserAccount::createFromDiscriminatorValue);
+        return this.requestAdapter.send(requestInfo, errorMapping, UserAccountInfo::createFromDiscriminatorValue);
     }
     /**
-     * Update a user account
+     * Update a user account. API key tokens and administrators can update any account, including its role. Other users can update only their own account and can&apos;t change its role (403 otherwise). Locked users can&apos;t update anything. `role` must be a valid role (400 otherwise). Returns 404 if the account doesn&apos;t exist.
      * @param body The request body
-     * @return a {@link UserAccount}
+     * @return a {@link UserAccountInfo}
      * @throws BadRequest When receiving a 400 status code
      * @throws Unauthorized When receiving a 401 status code
+     * @throws Forbidden When receiving a 403 status code
      * @throws NotFound When receiving a 404 status code
      * @throws ServerError When receiving a 500 status code
      */
     @jakarta.annotation.Nullable
-    public UserAccount put(@jakarta.annotation.Nonnull final UserAccountUpdate body) {
+    public UserAccountInfo put(@jakarta.annotation.Nonnull final UserAccountUpdate body) {
         return put(body, null);
     }
     /**
-     * Update a user account
+     * Update a user account. API key tokens and administrators can update any account, including its role. Other users can update only their own account and can&apos;t change its role (403 otherwise). Locked users can&apos;t update anything. `role` must be a valid role (400 otherwise). Returns 404 if the account doesn&apos;t exist.
      * @param body The request body
      * @param requestConfiguration Configuration for the request such as headers, query parameters, and middleware options.
-     * @return a {@link UserAccount}
+     * @return a {@link UserAccountInfo}
      * @throws BadRequest When receiving a 400 status code
      * @throws Unauthorized When receiving a 401 status code
+     * @throws Forbidden When receiving a 403 status code
      * @throws NotFound When receiving a 404 status code
      * @throws ServerError When receiving a 500 status code
      */
     @jakarta.annotation.Nullable
-    public UserAccount put(@jakarta.annotation.Nonnull final UserAccountUpdate body, @jakarta.annotation.Nullable final java.util.function.Consumer<PutRequestConfiguration> requestConfiguration) {
+    public UserAccountInfo put(@jakarta.annotation.Nonnull final UserAccountUpdate body, @jakarta.annotation.Nullable final java.util.function.Consumer<PutRequestConfiguration> requestConfiguration) {
         Objects.requireNonNull(body);
         final RequestInformation requestInfo = toPutRequestInformation(body, requestConfiguration);
         final HashMap<String, ParsableFactory<? extends Parsable>> errorMapping = new HashMap<String, ParsableFactory<? extends Parsable>>();
         errorMapping.put("400", BadRequest::createFromDiscriminatorValue);
         errorMapping.put("401", Unauthorized::createFromDiscriminatorValue);
+        errorMapping.put("403", Forbidden::createFromDiscriminatorValue);
         errorMapping.put("404", NotFound::createFromDiscriminatorValue);
         errorMapping.put("500", ServerError::createFromDiscriminatorValue);
-        return this.requestAdapter.send(requestInfo, errorMapping, UserAccount::createFromDiscriminatorValue);
+        return this.requestAdapter.send(requestInfo, errorMapping, UserAccountInfo::createFromDiscriminatorValue);
     }
     /**
-     * Delete a user account by username
+     * Delete a user account by username. Requires an API key token or an administrator login.
      * @return a {@link RequestInformation}
      */
     @jakarta.annotation.Nonnull
@@ -161,7 +168,7 @@ public class WithNameItemRequestBuilder extends BaseRequestBuilder {
         return toDeleteRequestInformation(null);
     }
     /**
-     * Delete a user account by username
+     * Delete a user account by username. Requires an API key token or an administrator login.
      * @param requestConfiguration Configuration for the request such as headers, query parameters, and middleware options.
      * @return a {@link RequestInformation}
      */
@@ -193,7 +200,7 @@ public class WithNameItemRequestBuilder extends BaseRequestBuilder {
         return requestInfo;
     }
     /**
-     * Update a user account
+     * Update a user account. API key tokens and administrators can update any account, including its role. Other users can update only their own account and can&apos;t change its role (403 otherwise). Locked users can&apos;t update anything. `role` must be a valid role (400 otherwise). Returns 404 if the account doesn&apos;t exist.
      * @param body The request body
      * @return a {@link RequestInformation}
      */
@@ -202,7 +209,7 @@ public class WithNameItemRequestBuilder extends BaseRequestBuilder {
         return toPutRequestInformation(body, null);
     }
     /**
-     * Update a user account
+     * Update a user account. API key tokens and administrators can update any account, including its role. Other users can update only their own account and can&apos;t change its role (403 otherwise). Locked users can&apos;t update anything. `role` must be a valid role (400 otherwise). Returns 404 if the account doesn&apos;t exist.
      * @param body The request body
      * @param requestConfiguration Configuration for the request such as headers, query parameters, and middleware options.
      * @return a {@link RequestInformation}

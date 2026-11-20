@@ -58,7 +58,7 @@ public class WithNameItemRequestBuilder extends BaseRequestBuilder {
         super(requestAdapter, "{+baseurl}/v1/concept/find/{name}", rawUrl);
     }
     /**
-     * Find concepts by name containing
+     * Find concepts with a name containing the given text (case-insensitive), sorted by name
      * @return a {@link java.util.List<ConceptMetadata>}
      * @throws BadRequest When receiving a 400 status code
      * @throws NotFound When receiving a 404 status code
@@ -69,7 +69,7 @@ public class WithNameItemRequestBuilder extends BaseRequestBuilder {
         return get(null);
     }
     /**
-     * Find concepts by name containing
+     * Find concepts with a name containing the given text (case-insensitive), sorted by name
      * @param requestConfiguration Configuration for the request such as headers, query parameters, and middleware options.
      * @return a {@link java.util.List<ConceptMetadata>}
      * @throws BadRequest When receiving a 400 status code
@@ -86,7 +86,7 @@ public class WithNameItemRequestBuilder extends BaseRequestBuilder {
         return this.requestAdapter.sendCollection(requestInfo, errorMapping, ConceptMetadata::createFromDiscriminatorValue);
     }
     /**
-     * Find concepts by name containing
+     * Find concepts with a name containing the given text (case-insensitive), sorted by name
      * @return a {@link RequestInformation}
      */
     @jakarta.annotation.Nonnull
@@ -94,7 +94,7 @@ public class WithNameItemRequestBuilder extends BaseRequestBuilder {
         return toGetRequestInformation(null);
     }
     /**
-     * Find concepts by name containing
+     * Find concepts with a name containing the given text (case-insensitive), sorted by name
      * @param requestConfiguration Configuration for the request such as headers, query parameters, and middleware options.
      * @return a {@link RequestInformation}
      */

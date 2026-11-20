@@ -34,6 +34,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import org.mbari.vars.oni.sdk.kiota.models.BadRequest;
+import org.mbari.vars.oni.sdk.kiota.models.Forbidden;
 import org.mbari.vars.oni.sdk.kiota.models.NotFound;
 import org.mbari.vars.oni.sdk.kiota.models.PrefNode;
 import org.mbari.vars.oni.sdk.kiota.models.PrefNodeUpdate;
@@ -59,7 +60,7 @@ public class PrefsRequestBuilder extends BaseRequestBuilder {
      * @param requestAdapter The request adapter to use to execute the requests.
      */
     public PrefsRequestBuilder(@jakarta.annotation.Nonnull final HashMap<String, Object> pathParameters, @jakarta.annotation.Nonnull final RequestAdapter requestAdapter) {
-        super(requestAdapter, "{+baseurl}/v1/prefs?name={name}{&key*}", pathParameters);
+        super(requestAdapter, "{+baseurl}/v1/prefs{?key*}", pathParameters);
     }
     /**
      * Instantiates a new {@link PrefsRequestBuilder} and sets the default values.
@@ -67,13 +68,14 @@ public class PrefsRequestBuilder extends BaseRequestBuilder {
      * @param requestAdapter The request adapter to use to execute the requests.
      */
     public PrefsRequestBuilder(@jakarta.annotation.Nonnull final String rawUrl, @jakarta.annotation.Nonnull final RequestAdapter requestAdapter) {
-        super(requestAdapter, "{+baseurl}/v1/prefs?name={name}{&key*}", rawUrl);
+        super(requestAdapter, "{+baseurl}/v1/prefs{?key*}", rawUrl);
     }
     /**
-     * Delete a prefNode
+     * Delete a prefNode. Requires an API key token or an administrator or maintainer login
      * @return a {@link PrefsDeleteResponse}
      * @throws BadRequest When receiving a 400 status code
      * @throws Unauthorized When receiving a 401 status code
+     * @throws Forbidden When receiving a 403 status code
      * @throws NotFound When receiving a 404 status code
      * @throws ServerError When receiving a 500 status code
      */
@@ -82,11 +84,12 @@ public class PrefsRequestBuilder extends BaseRequestBuilder {
         return delete(null);
     }
     /**
-     * Delete a prefNode
+     * Delete a prefNode. Requires an API key token or an administrator or maintainer login
      * @param requestConfiguration Configuration for the request such as headers, query parameters, and middleware options.
      * @return a {@link PrefsDeleteResponse}
      * @throws BadRequest When receiving a 400 status code
      * @throws Unauthorized When receiving a 401 status code
+     * @throws Forbidden When receiving a 403 status code
      * @throws NotFound When receiving a 404 status code
      * @throws ServerError When receiving a 500 status code
      */
@@ -96,12 +99,13 @@ public class PrefsRequestBuilder extends BaseRequestBuilder {
         final HashMap<String, ParsableFactory<? extends Parsable>> errorMapping = new HashMap<String, ParsableFactory<? extends Parsable>>();
         errorMapping.put("400", BadRequest::createFromDiscriminatorValue);
         errorMapping.put("401", Unauthorized::createFromDiscriminatorValue);
+        errorMapping.put("403", Forbidden::createFromDiscriminatorValue);
         errorMapping.put("404", NotFound::createFromDiscriminatorValue);
         errorMapping.put("500", ServerError::createFromDiscriminatorValue);
         return this.requestAdapter.send(requestInfo, errorMapping, PrefsDeleteResponse::createFromDiscriminatorValue);
     }
     /**
-     * Get all prefNode names matching a node name and key
+     * Get the prefNodes with a node name and, optionally, a key
      * @return a {@link java.util.List<PrefNode>}
      * @throws BadRequest When receiving a 400 status code
      * @throws NotFound When receiving a 404 status code
@@ -112,7 +116,7 @@ public class PrefsRequestBuilder extends BaseRequestBuilder {
         return get(null);
     }
     /**
-     * Get all prefNode names matching a node name and key
+     * Get the prefNodes with a node name and, optionally, a key
      * @param requestConfiguration Configuration for the request such as headers, query parameters, and middleware options.
      * @return a {@link java.util.List<PrefNode>}
      * @throws BadRequest When receiving a 400 status code
@@ -129,11 +133,12 @@ public class PrefsRequestBuilder extends BaseRequestBuilder {
         return this.requestAdapter.sendCollection(requestInfo, errorMapping, PrefNode::createFromDiscriminatorValue);
     }
     /**
-     * Create a new prefNode
+     * Create a new prefNode. Accepts a JSON or form body. Requires an API key token or an administrator or maintainer login
      * @param body The request body
      * @return a {@link PrefNode}
      * @throws BadRequest When receiving a 400 status code
      * @throws Unauthorized When receiving a 401 status code
+     * @throws Forbidden When receiving a 403 status code
      * @throws NotFound When receiving a 404 status code
      * @throws ServerError When receiving a 500 status code
      */
@@ -142,12 +147,13 @@ public class PrefsRequestBuilder extends BaseRequestBuilder {
         return post(body, null);
     }
     /**
-     * Create a new prefNode
+     * Create a new prefNode. Accepts a JSON or form body. Requires an API key token or an administrator or maintainer login
      * @param body The request body
      * @param requestConfiguration Configuration for the request such as headers, query parameters, and middleware options.
      * @return a {@link PrefNode}
      * @throws BadRequest When receiving a 400 status code
      * @throws Unauthorized When receiving a 401 status code
+     * @throws Forbidden When receiving a 403 status code
      * @throws NotFound When receiving a 404 status code
      * @throws ServerError When receiving a 500 status code
      */
@@ -158,16 +164,18 @@ public class PrefsRequestBuilder extends BaseRequestBuilder {
         final HashMap<String, ParsableFactory<? extends Parsable>> errorMapping = new HashMap<String, ParsableFactory<? extends Parsable>>();
         errorMapping.put("400", BadRequest::createFromDiscriminatorValue);
         errorMapping.put("401", Unauthorized::createFromDiscriminatorValue);
+        errorMapping.put("403", Forbidden::createFromDiscriminatorValue);
         errorMapping.put("404", NotFound::createFromDiscriminatorValue);
         errorMapping.put("500", ServerError::createFromDiscriminatorValue);
         return this.requestAdapter.send(requestInfo, errorMapping, PrefNode::createFromDiscriminatorValue);
     }
     /**
-     * Update a prefNode. Can be called using form body or json body. If name and key are not in the request body, they must be in the query parameters.
+     * Update a prefNode. Accepts a JSON or form body. If name and key are not in the request body, they must be in the query parameters (400 otherwise). Requires an API key token or an administrator or maintainer login
      * @param body The request body
      * @return a {@link PrefNode}
      * @throws BadRequest When receiving a 400 status code
      * @throws Unauthorized When receiving a 401 status code
+     * @throws Forbidden When receiving a 403 status code
      * @throws NotFound When receiving a 404 status code
      * @throws ServerError When receiving a 500 status code
      */
@@ -176,12 +184,13 @@ public class PrefsRequestBuilder extends BaseRequestBuilder {
         return put(body, null);
     }
     /**
-     * Update a prefNode. Can be called using form body or json body. If name and key are not in the request body, they must be in the query parameters.
+     * Update a prefNode. Accepts a JSON or form body. If name and key are not in the request body, they must be in the query parameters (400 otherwise). Requires an API key token or an administrator or maintainer login
      * @param body The request body
      * @param requestConfiguration Configuration for the request such as headers, query parameters, and middleware options.
      * @return a {@link PrefNode}
      * @throws BadRequest When receiving a 400 status code
      * @throws Unauthorized When receiving a 401 status code
+     * @throws Forbidden When receiving a 403 status code
      * @throws NotFound When receiving a 404 status code
      * @throws ServerError When receiving a 500 status code
      */
@@ -192,12 +201,13 @@ public class PrefsRequestBuilder extends BaseRequestBuilder {
         final HashMap<String, ParsableFactory<? extends Parsable>> errorMapping = new HashMap<String, ParsableFactory<? extends Parsable>>();
         errorMapping.put("400", BadRequest::createFromDiscriminatorValue);
         errorMapping.put("401", Unauthorized::createFromDiscriminatorValue);
+        errorMapping.put("403", Forbidden::createFromDiscriminatorValue);
         errorMapping.put("404", NotFound::createFromDiscriminatorValue);
         errorMapping.put("500", ServerError::createFromDiscriminatorValue);
         return this.requestAdapter.send(requestInfo, errorMapping, PrefNode::createFromDiscriminatorValue);
     }
     /**
-     * Delete a prefNode
+     * Delete a prefNode. Requires an API key token or an administrator or maintainer login
      * @return a {@link RequestInformation}
      */
     @jakarta.annotation.Nonnull
@@ -205,7 +215,7 @@ public class PrefsRequestBuilder extends BaseRequestBuilder {
         return toDeleteRequestInformation(null);
     }
     /**
-     * Delete a prefNode
+     * Delete a prefNode. Requires an API key token or an administrator or maintainer login
      * @param requestConfiguration Configuration for the request such as headers, query parameters, and middleware options.
      * @return a {@link RequestInformation}
      */
@@ -217,7 +227,7 @@ public class PrefsRequestBuilder extends BaseRequestBuilder {
         return requestInfo;
     }
     /**
-     * Get all prefNode names matching a node name and key
+     * Get the prefNodes with a node name and, optionally, a key
      * @return a {@link RequestInformation}
      */
     @jakarta.annotation.Nonnull
@@ -225,19 +235,19 @@ public class PrefsRequestBuilder extends BaseRequestBuilder {
         return toGetRequestInformation(null);
     }
     /**
-     * Get all prefNode names matching a node name and key
+     * Get the prefNodes with a node name and, optionally, a key
      * @param requestConfiguration Configuration for the request such as headers, query parameters, and middleware options.
      * @return a {@link RequestInformation}
      */
     @jakarta.annotation.Nonnull
     public RequestInformation toGetRequestInformation(@jakarta.annotation.Nullable final java.util.function.Consumer<GetRequestConfiguration> requestConfiguration) {
-        final RequestInformation requestInfo = new RequestInformation(HttpMethod.GET, urlTemplate, pathParameters);
+        final RequestInformation requestInfo = new RequestInformation(HttpMethod.GET, "{+baseurl}/v1/prefs?name={name}{&key*}", pathParameters);
         requestInfo.configure(requestConfiguration, GetRequestConfiguration::new, x -> x.queryParameters);
         requestInfo.headers.tryAdd("Accept", "application/json");
         return requestInfo;
     }
     /**
-     * Create a new prefNode
+     * Create a new prefNode. Accepts a JSON or form body. Requires an API key token or an administrator or maintainer login
      * @param body The request body
      * @return a {@link RequestInformation}
      */
@@ -246,7 +256,7 @@ public class PrefsRequestBuilder extends BaseRequestBuilder {
         return toPostRequestInformation(body, null);
     }
     /**
-     * Create a new prefNode
+     * Create a new prefNode. Accepts a JSON or form body. Requires an API key token or an administrator or maintainer login
      * @param body The request body
      * @param requestConfiguration Configuration for the request such as headers, query parameters, and middleware options.
      * @return a {@link RequestInformation}
@@ -254,14 +264,14 @@ public class PrefsRequestBuilder extends BaseRequestBuilder {
     @jakarta.annotation.Nonnull
     public RequestInformation toPostRequestInformation(@jakarta.annotation.Nonnull final PrefNode body, @jakarta.annotation.Nullable final java.util.function.Consumer<PostRequestConfiguration> requestConfiguration) {
         Objects.requireNonNull(body);
-        final RequestInformation requestInfo = new RequestInformation(HttpMethod.POST, "{+baseurl}/v1/prefs", pathParameters);
+        final RequestInformation requestInfo = new RequestInformation(HttpMethod.POST, urlTemplate, pathParameters);
         requestInfo.configure(requestConfiguration, PostRequestConfiguration::new);
         requestInfo.headers.tryAdd("Accept", "application/json");
         requestInfo.setContentFromParsable(requestAdapter, "application/json", body);
         return requestInfo;
     }
     /**
-     * Update a prefNode. Can be called using form body or json body. If name and key are not in the request body, they must be in the query parameters.
+     * Update a prefNode. Accepts a JSON or form body. If name and key are not in the request body, they must be in the query parameters (400 otherwise). Requires an API key token or an administrator or maintainer login
      * @param body The request body
      * @return a {@link RequestInformation}
      */
@@ -270,7 +280,7 @@ public class PrefsRequestBuilder extends BaseRequestBuilder {
         return toPutRequestInformation(body, null);
     }
     /**
-     * Update a prefNode. Can be called using form body or json body. If name and key are not in the request body, they must be in the query parameters.
+     * Update a prefNode. Accepts a JSON or form body. If name and key are not in the request body, they must be in the query parameters (400 otherwise). Requires an API key token or an administrator or maintainer login
      * @param body The request body
      * @param requestConfiguration Configuration for the request such as headers, query parameters, and middleware options.
      * @return a {@link RequestInformation}
@@ -278,7 +288,7 @@ public class PrefsRequestBuilder extends BaseRequestBuilder {
     @jakarta.annotation.Nonnull
     public RequestInformation toPutRequestInformation(@jakarta.annotation.Nonnull final PrefNodeUpdate body, @jakarta.annotation.Nullable final java.util.function.Consumer<PutRequestConfiguration> requestConfiguration) {
         Objects.requireNonNull(body);
-        final RequestInformation requestInfo = new RequestInformation(HttpMethod.PUT, "{+baseurl}/v1/prefs{?key*,name*}", pathParameters);
+        final RequestInformation requestInfo = new RequestInformation(HttpMethod.PUT, urlTemplate, pathParameters);
         requestInfo.configure(requestConfiguration, PutRequestConfiguration::new, x -> x.queryParameters);
         requestInfo.headers.tryAdd("Accept", "application/json");
         requestInfo.setContentFromParsable(requestAdapter, "application/json", body);
@@ -295,7 +305,7 @@ public class PrefsRequestBuilder extends BaseRequestBuilder {
         return new PrefsRequestBuilder(rawUrl, requestAdapter);
     }
     /**
-     * Delete a prefNode
+     * Delete a prefNode. Requires an API key token or an administrator or maintainer login
      */
     @jakarta.annotation.Generated("com.microsoft.kiota")
     public class DeleteQueryParameters implements QueryParameters {
@@ -333,7 +343,7 @@ public class PrefsRequestBuilder extends BaseRequestBuilder {
         public DeleteQueryParameters queryParameters = new DeleteQueryParameters();
     }
     /**
-     * Get all prefNode names matching a node name and key
+     * Get the prefNodes with a node name and, optionally, a key
      */
     @jakarta.annotation.Generated("com.microsoft.kiota")
     public class GetQueryParameters implements QueryParameters {
@@ -377,7 +387,7 @@ public class PrefsRequestBuilder extends BaseRequestBuilder {
     public class PostRequestConfiguration extends BaseRequestConfiguration {
     }
     /**
-     * Update a prefNode. Can be called using form body or json body. If name and key are not in the request body, they must be in the query parameters.
+     * Update a prefNode. Accepts a JSON or form body. If name and key are not in the request body, they must be in the query parameters (400 otherwise). Requires an API key token or an administrator or maintainer login
      */
     @jakarta.annotation.Generated("com.microsoft.kiota")
     public class PutQueryParameters implements QueryParameters {

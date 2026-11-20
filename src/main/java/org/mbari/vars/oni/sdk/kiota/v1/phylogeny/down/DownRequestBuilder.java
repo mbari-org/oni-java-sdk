@@ -24,12 +24,21 @@ import com.microsoft.kiota.BaseRequestBuilder;
 import com.microsoft.kiota.RequestAdapter;
 import java.util.HashMap;
 import java.util.Objects;
+import org.mbari.vars.oni.sdk.kiota.v1.phylogeny.down.id.IdRequestBuilder;
 import org.mbari.vars.oni.sdk.kiota.v1.phylogeny.down.item.WithNameItemRequestBuilder;
 /**
  * Builds and executes requests for operations under /v1/phylogeny/down
  */
 @jakarta.annotation.Generated("com.microsoft.kiota")
 public class DownRequestBuilder extends BaseRequestBuilder {
+    /**
+     * The id property
+     * @return a {@link IdRequestBuilder}
+     */
+    @jakarta.annotation.Nonnull
+    public IdRequestBuilder id() {
+        return new IdRequestBuilder(pathParameters, requestAdapter);
+    }
     /**
      * Gets an item from the org.mbari.vars.oni.sdk.kiota.v1.phylogeny.down.item collection
      * @param name Unique identifier of the item

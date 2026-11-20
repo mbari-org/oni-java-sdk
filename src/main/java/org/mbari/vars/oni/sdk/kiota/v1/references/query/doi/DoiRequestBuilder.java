@@ -59,7 +59,7 @@ public class DoiRequestBuilder extends BaseRequestBuilder {
         super(requestAdapter, "{+baseurl}/v1/references/query/doi", rawUrl);
     }
     /**
-     * Find a reference by DOI
+     * Find a reference by the `doi` in the request body. Returns 400 if `doi` is missing
      * @param body The request body
      * @return a {@link Reference}
      * @throws BadRequest When receiving a 400 status code
@@ -71,7 +71,7 @@ public class DoiRequestBuilder extends BaseRequestBuilder {
         return post(body, null);
     }
     /**
-     * Find a reference by DOI
+     * Find a reference by the `doi` in the request body. Returns 400 if `doi` is missing
      * @param body The request body
      * @param requestConfiguration Configuration for the request such as headers, query parameters, and middleware options.
      * @return a {@link Reference}
@@ -90,7 +90,7 @@ public class DoiRequestBuilder extends BaseRequestBuilder {
         return this.requestAdapter.send(requestInfo, errorMapping, Reference::createFromDiscriminatorValue);
     }
     /**
-     * Find a reference by DOI
+     * Find a reference by the `doi` in the request body. Returns 400 if `doi` is missing
      * @param body The request body
      * @return a {@link RequestInformation}
      */
@@ -99,7 +99,7 @@ public class DoiRequestBuilder extends BaseRequestBuilder {
         return toPostRequestInformation(body, null);
     }
     /**
-     * Find a reference by DOI
+     * Find a reference by the `doi` in the request body. Returns 400 if `doi` is missing
      * @param body The request body
      * @param requestConfiguration Configuration for the request such as headers, query parameters, and middleware options.
      * @return a {@link RequestInformation}

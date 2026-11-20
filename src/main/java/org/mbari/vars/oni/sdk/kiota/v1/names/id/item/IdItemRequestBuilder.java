@@ -1,0 +1,254 @@
+package org.mbari.vars.oni.sdk.kiota.v1.names.id.item;
+
+/*-
+ * #%L
+ * org.mbari.vars:oni-java-sdk
+ * %%
+ * Copyright (C) 2025 - 2026 Monterey Bay Aquarium Research Institute
+ * %%
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * #L%
+ */
+
+import com.microsoft.kiota.BaseRequestBuilder;
+import com.microsoft.kiota.BaseRequestConfiguration;
+import com.microsoft.kiota.HttpMethod;
+import com.microsoft.kiota.RequestAdapter;
+import com.microsoft.kiota.RequestInformation;
+import com.microsoft.kiota.RequestOption;
+import com.microsoft.kiota.serialization.Parsable;
+import com.microsoft.kiota.serialization.ParsableFactory;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import org.mbari.vars.oni.sdk.kiota.models.BadRequest;
+import org.mbari.vars.oni.sdk.kiota.models.ConceptNameUpdate;
+import org.mbari.vars.oni.sdk.kiota.models.Forbidden;
+import org.mbari.vars.oni.sdk.kiota.models.NotFound;
+import org.mbari.vars.oni.sdk.kiota.models.RawConcept;
+import org.mbari.vars.oni.sdk.kiota.models.ServerError;
+import org.mbari.vars.oni.sdk.kiota.models.Unauthorized;
+/**
+ * Builds and executes requests for operations under /v1/names/id/{id}
+ */
+@jakarta.annotation.Generated("com.microsoft.kiota")
+public class IdItemRequestBuilder extends BaseRequestBuilder {
+    /**
+     * Instantiates a new {@link IdItemRequestBuilder} and sets the default values.
+     * @param pathParameters Path parameters for the request
+     * @param requestAdapter The request adapter to use to execute the requests.
+     */
+    public IdItemRequestBuilder(@jakarta.annotation.Nonnull final HashMap<String, Object> pathParameters, @jakarta.annotation.Nonnull final RequestAdapter requestAdapter) {
+        super(requestAdapter, "{+baseurl}/v1/names/id/{id}", pathParameters);
+    }
+    /**
+     * Instantiates a new {@link IdItemRequestBuilder} and sets the default values.
+     * @param rawUrl The raw URL to use for the request builder.
+     * @param requestAdapter The request adapter to use to execute the requests.
+     */
+    public IdItemRequestBuilder(@jakarta.annotation.Nonnull final String rawUrl, @jakarta.annotation.Nonnull final RequestAdapter requestAdapter) {
+        super(requestAdapter, "{+baseurl}/v1/names/id/{id}", rawUrl);
+    }
+    /**
+     * Delete a concept name by id. Primary names cannot be deleted (400). Requires an administrator or maintainer login. Administrators delete immediately; other users create a pending delete that must be approved by an administrator.
+     * @return a {@link RawConcept}
+     * @throws BadRequest When receiving a 400 status code
+     * @throws Unauthorized When receiving a 401 status code
+     * @throws Forbidden When receiving a 403 status code
+     * @throws NotFound When receiving a 404 status code
+     * @throws ServerError When receiving a 500 status code
+     */
+    @jakarta.annotation.Nullable
+    public RawConcept delete() {
+        return delete(null);
+    }
+    /**
+     * Delete a concept name by id. Primary names cannot be deleted (400). Requires an administrator or maintainer login. Administrators delete immediately; other users create a pending delete that must be approved by an administrator.
+     * @param requestConfiguration Configuration for the request such as headers, query parameters, and middleware options.
+     * @return a {@link RawConcept}
+     * @throws BadRequest When receiving a 400 status code
+     * @throws Unauthorized When receiving a 401 status code
+     * @throws Forbidden When receiving a 403 status code
+     * @throws NotFound When receiving a 404 status code
+     * @throws ServerError When receiving a 500 status code
+     */
+    @jakarta.annotation.Nullable
+    public RawConcept delete(@jakarta.annotation.Nullable final java.util.function.Consumer<DeleteRequestConfiguration> requestConfiguration) {
+        final RequestInformation requestInfo = toDeleteRequestInformation(requestConfiguration);
+        final HashMap<String, ParsableFactory<? extends Parsable>> errorMapping = new HashMap<String, ParsableFactory<? extends Parsable>>();
+        errorMapping.put("400", BadRequest::createFromDiscriminatorValue);
+        errorMapping.put("401", Unauthorized::createFromDiscriminatorValue);
+        errorMapping.put("403", Forbidden::createFromDiscriminatorValue);
+        errorMapping.put("404", NotFound::createFromDiscriminatorValue);
+        errorMapping.put("500", ServerError::createFromDiscriminatorValue);
+        return this.requestAdapter.send(requestInfo, errorMapping, RawConcept::createFromDiscriminatorValue);
+    }
+    /**
+     * Find the concept that owns the concept name with the given id
+     * @return a {@link RawConcept}
+     * @throws BadRequest When receiving a 400 status code
+     * @throws NotFound When receiving a 404 status code
+     * @throws ServerError When receiving a 500 status code
+     */
+    @jakarta.annotation.Nullable
+    public RawConcept get() {
+        return get(null);
+    }
+    /**
+     * Find the concept that owns the concept name with the given id
+     * @param requestConfiguration Configuration for the request such as headers, query parameters, and middleware options.
+     * @return a {@link RawConcept}
+     * @throws BadRequest When receiving a 400 status code
+     * @throws NotFound When receiving a 404 status code
+     * @throws ServerError When receiving a 500 status code
+     */
+    @jakarta.annotation.Nullable
+    public RawConcept get(@jakarta.annotation.Nullable final java.util.function.Consumer<GetRequestConfiguration> requestConfiguration) {
+        final RequestInformation requestInfo = toGetRequestInformation(requestConfiguration);
+        final HashMap<String, ParsableFactory<? extends Parsable>> errorMapping = new HashMap<String, ParsableFactory<? extends Parsable>>();
+        errorMapping.put("400", BadRequest::createFromDiscriminatorValue);
+        errorMapping.put("404", NotFound::createFromDiscriminatorValue);
+        errorMapping.put("500", ServerError::createFromDiscriminatorValue);
+        return this.requestAdapter.send(requestInfo, errorMapping, RawConcept::createFromDiscriminatorValue);
+    }
+    /**
+     * Update a concept name by id. Rename it (`newName`, 400 if that name already exists), change its type, or change its author (set `author` to an empty string to remove it). A primary name cannot be changed to another type (400). Requires an administrator or maintainer login. Maintainer changes are applied and recorded as pending history.
+     * @param body The request body
+     * @return a {@link RawConcept}
+     * @throws BadRequest When receiving a 400 status code
+     * @throws Unauthorized When receiving a 401 status code
+     * @throws Forbidden When receiving a 403 status code
+     * @throws NotFound When receiving a 404 status code
+     * @throws ServerError When receiving a 500 status code
+     */
+    @jakarta.annotation.Nullable
+    public RawConcept put(@jakarta.annotation.Nonnull final ConceptNameUpdate body) {
+        return put(body, null);
+    }
+    /**
+     * Update a concept name by id. Rename it (`newName`, 400 if that name already exists), change its type, or change its author (set `author` to an empty string to remove it). A primary name cannot be changed to another type (400). Requires an administrator or maintainer login. Maintainer changes are applied and recorded as pending history.
+     * @param body The request body
+     * @param requestConfiguration Configuration for the request such as headers, query parameters, and middleware options.
+     * @return a {@link RawConcept}
+     * @throws BadRequest When receiving a 400 status code
+     * @throws Unauthorized When receiving a 401 status code
+     * @throws Forbidden When receiving a 403 status code
+     * @throws NotFound When receiving a 404 status code
+     * @throws ServerError When receiving a 500 status code
+     */
+    @jakarta.annotation.Nullable
+    public RawConcept put(@jakarta.annotation.Nonnull final ConceptNameUpdate body, @jakarta.annotation.Nullable final java.util.function.Consumer<PutRequestConfiguration> requestConfiguration) {
+        Objects.requireNonNull(body);
+        final RequestInformation requestInfo = toPutRequestInformation(body, requestConfiguration);
+        final HashMap<String, ParsableFactory<? extends Parsable>> errorMapping = new HashMap<String, ParsableFactory<? extends Parsable>>();
+        errorMapping.put("400", BadRequest::createFromDiscriminatorValue);
+        errorMapping.put("401", Unauthorized::createFromDiscriminatorValue);
+        errorMapping.put("403", Forbidden::createFromDiscriminatorValue);
+        errorMapping.put("404", NotFound::createFromDiscriminatorValue);
+        errorMapping.put("500", ServerError::createFromDiscriminatorValue);
+        return this.requestAdapter.send(requestInfo, errorMapping, RawConcept::createFromDiscriminatorValue);
+    }
+    /**
+     * Delete a concept name by id. Primary names cannot be deleted (400). Requires an administrator or maintainer login. Administrators delete immediately; other users create a pending delete that must be approved by an administrator.
+     * @return a {@link RequestInformation}
+     */
+    @jakarta.annotation.Nonnull
+    public RequestInformation toDeleteRequestInformation() {
+        return toDeleteRequestInformation(null);
+    }
+    /**
+     * Delete a concept name by id. Primary names cannot be deleted (400). Requires an administrator or maintainer login. Administrators delete immediately; other users create a pending delete that must be approved by an administrator.
+     * @param requestConfiguration Configuration for the request such as headers, query parameters, and middleware options.
+     * @return a {@link RequestInformation}
+     */
+    @jakarta.annotation.Nonnull
+    public RequestInformation toDeleteRequestInformation(@jakarta.annotation.Nullable final java.util.function.Consumer<DeleteRequestConfiguration> requestConfiguration) {
+        final RequestInformation requestInfo = new RequestInformation(HttpMethod.DELETE, urlTemplate, pathParameters);
+        requestInfo.configure(requestConfiguration, DeleteRequestConfiguration::new);
+        requestInfo.headers.tryAdd("Accept", "application/json");
+        return requestInfo;
+    }
+    /**
+     * Find the concept that owns the concept name with the given id
+     * @return a {@link RequestInformation}
+     */
+    @jakarta.annotation.Nonnull
+    public RequestInformation toGetRequestInformation() {
+        return toGetRequestInformation(null);
+    }
+    /**
+     * Find the concept that owns the concept name with the given id
+     * @param requestConfiguration Configuration for the request such as headers, query parameters, and middleware options.
+     * @return a {@link RequestInformation}
+     */
+    @jakarta.annotation.Nonnull
+    public RequestInformation toGetRequestInformation(@jakarta.annotation.Nullable final java.util.function.Consumer<GetRequestConfiguration> requestConfiguration) {
+        final RequestInformation requestInfo = new RequestInformation(HttpMethod.GET, urlTemplate, pathParameters);
+        requestInfo.configure(requestConfiguration, GetRequestConfiguration::new);
+        requestInfo.headers.tryAdd("Accept", "application/json");
+        return requestInfo;
+    }
+    /**
+     * Update a concept name by id. Rename it (`newName`, 400 if that name already exists), change its type, or change its author (set `author` to an empty string to remove it). A primary name cannot be changed to another type (400). Requires an administrator or maintainer login. Maintainer changes are applied and recorded as pending history.
+     * @param body The request body
+     * @return a {@link RequestInformation}
+     */
+    @jakarta.annotation.Nonnull
+    public RequestInformation toPutRequestInformation(@jakarta.annotation.Nonnull final ConceptNameUpdate body) {
+        return toPutRequestInformation(body, null);
+    }
+    /**
+     * Update a concept name by id. Rename it (`newName`, 400 if that name already exists), change its type, or change its author (set `author` to an empty string to remove it). A primary name cannot be changed to another type (400). Requires an administrator or maintainer login. Maintainer changes are applied and recorded as pending history.
+     * @param body The request body
+     * @param requestConfiguration Configuration for the request such as headers, query parameters, and middleware options.
+     * @return a {@link RequestInformation}
+     */
+    @jakarta.annotation.Nonnull
+    public RequestInformation toPutRequestInformation(@jakarta.annotation.Nonnull final ConceptNameUpdate body, @jakarta.annotation.Nullable final java.util.function.Consumer<PutRequestConfiguration> requestConfiguration) {
+        Objects.requireNonNull(body);
+        final RequestInformation requestInfo = new RequestInformation(HttpMethod.PUT, urlTemplate, pathParameters);
+        requestInfo.configure(requestConfiguration, PutRequestConfiguration::new);
+        requestInfo.headers.tryAdd("Accept", "application/json");
+        requestInfo.setContentFromParsable(requestAdapter, "application/json", body);
+        return requestInfo;
+    }
+    /**
+     * Returns a request builder with the provided arbitrary URL. Using this method means any other path or query parameters are ignored.
+     * @param rawUrl The raw URL to use for the request builder.
+     * @return a {@link IdItemRequestBuilder}
+     */
+    @jakarta.annotation.Nonnull
+    public IdItemRequestBuilder withUrl(@jakarta.annotation.Nonnull final String rawUrl) {
+        Objects.requireNonNull(rawUrl);
+        return new IdItemRequestBuilder(rawUrl, requestAdapter);
+    }
+    /**
+     * Configuration for the request such as headers, query parameters, and middleware options.
+     */
+    @jakarta.annotation.Generated("com.microsoft.kiota")
+    public class DeleteRequestConfiguration extends BaseRequestConfiguration {
+    }
+    /**
+     * Configuration for the request such as headers, query parameters, and middleware options.
+     */
+    @jakarta.annotation.Generated("com.microsoft.kiota")
+    public class GetRequestConfiguration extends BaseRequestConfiguration {
+    }
+    /**
+     * Configuration for the request such as headers, query parameters, and middleware options.
+     */
+    @jakarta.annotation.Generated("com.microsoft.kiota")
+    public class PutRequestConfiguration extends BaseRequestConfiguration {
+    }
+}

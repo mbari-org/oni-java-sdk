@@ -24,7 +24,7 @@ import com.microsoft.kiota.BaseRequestBuilder;
 import com.microsoft.kiota.RequestAdapter;
 import java.util.HashMap;
 import java.util.Objects;
-import org.mbari.vars.oni.sdk.kiota.v1.history.approve.item.WithP1ItemRequestBuilder;
+import org.mbari.vars.oni.sdk.kiota.v1.history.approve.item.ApproveItemRequestBuilder;
 /**
  * Builds and executes requests for operations under /v1/history/approve
  */
@@ -32,15 +32,15 @@ import org.mbari.vars.oni.sdk.kiota.v1.history.approve.item.WithP1ItemRequestBui
 public class ApproveRequestBuilder extends BaseRequestBuilder {
     /**
      * Gets an item from the org.mbari.vars.oni.sdk.kiota.v1.history.approve.item collection
-     * @param p1 Unique identifier of the item
-     * @return a {@link WithP1ItemRequestBuilder}
+     * @param id Unique identifier of the item
+     * @return a {@link ApproveItemRequestBuilder}
      */
     @jakarta.annotation.Nonnull
-    public WithP1ItemRequestBuilder byP1(@jakarta.annotation.Nonnull final Long p1) {
-        Objects.requireNonNull(p1);
+    public ApproveItemRequestBuilder byId(@jakarta.annotation.Nonnull final Long id) {
+        Objects.requireNonNull(id);
         final HashMap<String, Object> urlTplParams = new HashMap<String, Object>(this.pathParameters);
-        urlTplParams.put("p1", p1);
-        return new WithP1ItemRequestBuilder(urlTplParams, requestAdapter);
+        urlTplParams.put("id", id);
+        return new ApproveItemRequestBuilder(urlTplParams, requestAdapter);
     }
     /**
      * Instantiates a new {@link ApproveRequestBuilder} and sets the default values.

@@ -25,6 +25,7 @@ import com.microsoft.kiota.RequestAdapter;
 import java.util.HashMap;
 import java.util.Objects;
 import org.mbari.vars.oni.sdk.kiota.v1.auth.AuthRequestBuilder;
+import org.mbari.vars.oni.sdk.kiota.v1.cache.CacheRequestBuilder;
 import org.mbari.vars.oni.sdk.kiota.v1.concept.ConceptRequestBuilder;
 import org.mbari.vars.oni.sdk.kiota.v1.health.HealthRequestBuilder;
 import org.mbari.vars.oni.sdk.kiota.v1.history.HistoryRequestBuilder;
@@ -50,6 +51,14 @@ public class V1RequestBuilder extends BaseRequestBuilder {
     @jakarta.annotation.Nonnull
     public AuthRequestBuilder auth() {
         return new AuthRequestBuilder(pathParameters, requestAdapter);
+    }
+    /**
+     * The cache property
+     * @return a {@link CacheRequestBuilder}
+     */
+    @jakarta.annotation.Nonnull
+    public CacheRequestBuilder cache() {
+        return new CacheRequestBuilder(pathParameters, requestAdapter);
     }
     /**
      * The concept property

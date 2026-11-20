@@ -33,6 +33,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import org.mbari.vars.oni.sdk.kiota.models.BadRequest;
+import org.mbari.vars.oni.sdk.kiota.models.Forbidden;
 import org.mbari.vars.oni.sdk.kiota.models.NotFound;
 import org.mbari.vars.oni.sdk.kiota.models.Reference;
 import org.mbari.vars.oni.sdk.kiota.models.ServerError;
@@ -59,10 +60,11 @@ public class WithConceptItemRequestBuilder extends BaseRequestBuilder {
         super(requestAdapter, "{+baseurl}/v1/references/remove/{id}/from/{concept}", rawUrl);
     }
     /**
-     * Remove a reference from a concept
+     * Remove a reference from a concept. Requires an API key token or an administrator or maintainer login.
      * @return a {@link Reference}
      * @throws BadRequest When receiving a 400 status code
      * @throws Unauthorized When receiving a 401 status code
+     * @throws Forbidden When receiving a 403 status code
      * @throws NotFound When receiving a 404 status code
      * @throws ServerError When receiving a 500 status code
      */
@@ -71,11 +73,12 @@ public class WithConceptItemRequestBuilder extends BaseRequestBuilder {
         return put(null);
     }
     /**
-     * Remove a reference from a concept
+     * Remove a reference from a concept. Requires an API key token or an administrator or maintainer login.
      * @param requestConfiguration Configuration for the request such as headers, query parameters, and middleware options.
      * @return a {@link Reference}
      * @throws BadRequest When receiving a 400 status code
      * @throws Unauthorized When receiving a 401 status code
+     * @throws Forbidden When receiving a 403 status code
      * @throws NotFound When receiving a 404 status code
      * @throws ServerError When receiving a 500 status code
      */
@@ -85,12 +88,13 @@ public class WithConceptItemRequestBuilder extends BaseRequestBuilder {
         final HashMap<String, ParsableFactory<? extends Parsable>> errorMapping = new HashMap<String, ParsableFactory<? extends Parsable>>();
         errorMapping.put("400", BadRequest::createFromDiscriminatorValue);
         errorMapping.put("401", Unauthorized::createFromDiscriminatorValue);
+        errorMapping.put("403", Forbidden::createFromDiscriminatorValue);
         errorMapping.put("404", NotFound::createFromDiscriminatorValue);
         errorMapping.put("500", ServerError::createFromDiscriminatorValue);
         return this.requestAdapter.send(requestInfo, errorMapping, Reference::createFromDiscriminatorValue);
     }
     /**
-     * Remove a reference from a concept
+     * Remove a reference from a concept. Requires an API key token or an administrator or maintainer login.
      * @return a {@link RequestInformation}
      */
     @jakarta.annotation.Nonnull
@@ -98,7 +102,7 @@ public class WithConceptItemRequestBuilder extends BaseRequestBuilder {
         return toPutRequestInformation(null);
     }
     /**
-     * Remove a reference from a concept
+     * Remove a reference from a concept. Requires an API key token or an administrator or maintainer login.
      * @param requestConfiguration Configuration for the request such as headers, query parameters, and middleware options.
      * @return a {@link RequestInformation}
      */

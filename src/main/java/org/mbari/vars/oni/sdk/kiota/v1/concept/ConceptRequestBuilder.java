@@ -35,11 +35,13 @@ import java.util.Objects;
 import org.mbari.vars.oni.sdk.kiota.models.BadRequest;
 import org.mbari.vars.oni.sdk.kiota.models.ConceptCreate;
 import org.mbari.vars.oni.sdk.kiota.models.ConceptMetadata;
+import org.mbari.vars.oni.sdk.kiota.models.Forbidden;
 import org.mbari.vars.oni.sdk.kiota.models.NotFound;
 import org.mbari.vars.oni.sdk.kiota.models.ServerError;
 import org.mbari.vars.oni.sdk.kiota.models.Unauthorized;
 import org.mbari.vars.oni.sdk.kiota.v1.concept.children.ChildrenRequestBuilder;
 import org.mbari.vars.oni.sdk.kiota.v1.concept.find.FindRequestBuilder;
+import org.mbari.vars.oni.sdk.kiota.v1.concept.id.IdRequestBuilder;
 import org.mbari.vars.oni.sdk.kiota.v1.concept.item.WithNameItemRequestBuilder;
 import org.mbari.vars.oni.sdk.kiota.v1.concept.parent.ParentRequestBuilder;
 import org.mbari.vars.oni.sdk.kiota.v1.concept.query.QueryRequestBuilder;
@@ -64,6 +66,14 @@ public class ConceptRequestBuilder extends BaseRequestBuilder {
     @jakarta.annotation.Nonnull
     public FindRequestBuilder find() {
         return new FindRequestBuilder(pathParameters, requestAdapter);
+    }
+    /**
+     * The id property
+     * @return a {@link IdRequestBuilder}
+     */
+    @jakarta.annotation.Nonnull
+    public IdRequestBuilder id() {
+        return new IdRequestBuilder(pathParameters, requestAdapter);
     }
     /**
      * The parent property
@@ -118,7 +128,7 @@ public class ConceptRequestBuilder extends BaseRequestBuilder {
         super(requestAdapter, "{+baseurl}/v1/concept", rawUrl);
     }
     /**
-     * Get all concept names
+     * Get the names of all concepts (primary and alternate), up to 10,000
      * @return a {@link java.util.List<String>}
      * @throws BadRequest When receiving a 400 status code
      * @throws NotFound When receiving a 404 status code
@@ -129,7 +139,7 @@ public class ConceptRequestBuilder extends BaseRequestBuilder {
         return get(null);
     }
     /**
-     * Get all concept names
+     * Get the names of all concepts (primary and alternate), up to 10,000
      * @param requestConfiguration Configuration for the request such as headers, query parameters, and middleware options.
      * @return a {@link java.util.List<String>}
      * @throws BadRequest When receiving a 400 status code
@@ -146,11 +156,12 @@ public class ConceptRequestBuilder extends BaseRequestBuilder {
         return this.requestAdapter.sendPrimitiveCollection(requestInfo, errorMapping, String.class);
     }
     /**
-     * Create a new concept
+     * Create a new concept as a child of `parentName`. If `parentName` is omitted the concept is created as the root, which fails with 400 if a root already exists. Returns 400 if the name already exists or the rank is invalid (see /concept/ranks). Requires an administrator or maintainer login. Maintainer changes are applied and recorded as pending history for an administrator to approve or reject.
      * @param body The request body
      * @return a {@link ConceptMetadata}
      * @throws BadRequest When receiving a 400 status code
      * @throws Unauthorized When receiving a 401 status code
+     * @throws Forbidden When receiving a 403 status code
      * @throws NotFound When receiving a 404 status code
      * @throws ServerError When receiving a 500 status code
      */
@@ -159,12 +170,13 @@ public class ConceptRequestBuilder extends BaseRequestBuilder {
         return post(body, null);
     }
     /**
-     * Create a new concept
+     * Create a new concept as a child of `parentName`. If `parentName` is omitted the concept is created as the root, which fails with 400 if a root already exists. Returns 400 if the name already exists or the rank is invalid (see /concept/ranks). Requires an administrator or maintainer login. Maintainer changes are applied and recorded as pending history for an administrator to approve or reject.
      * @param body The request body
      * @param requestConfiguration Configuration for the request such as headers, query parameters, and middleware options.
      * @return a {@link ConceptMetadata}
      * @throws BadRequest When receiving a 400 status code
      * @throws Unauthorized When receiving a 401 status code
+     * @throws Forbidden When receiving a 403 status code
      * @throws NotFound When receiving a 404 status code
      * @throws ServerError When receiving a 500 status code
      */
@@ -175,12 +187,13 @@ public class ConceptRequestBuilder extends BaseRequestBuilder {
         final HashMap<String, ParsableFactory<? extends Parsable>> errorMapping = new HashMap<String, ParsableFactory<? extends Parsable>>();
         errorMapping.put("400", BadRequest::createFromDiscriminatorValue);
         errorMapping.put("401", Unauthorized::createFromDiscriminatorValue);
+        errorMapping.put("403", Forbidden::createFromDiscriminatorValue);
         errorMapping.put("404", NotFound::createFromDiscriminatorValue);
         errorMapping.put("500", ServerError::createFromDiscriminatorValue);
         return this.requestAdapter.send(requestInfo, errorMapping, ConceptMetadata::createFromDiscriminatorValue);
     }
     /**
-     * Get all concept names
+     * Get the names of all concepts (primary and alternate), up to 10,000
      * @return a {@link RequestInformation}
      */
     @jakarta.annotation.Nonnull
@@ -188,7 +201,7 @@ public class ConceptRequestBuilder extends BaseRequestBuilder {
         return toGetRequestInformation(null);
     }
     /**
-     * Get all concept names
+     * Get the names of all concepts (primary and alternate), up to 10,000
      * @param requestConfiguration Configuration for the request such as headers, query parameters, and middleware options.
      * @return a {@link RequestInformation}
      */
@@ -200,7 +213,7 @@ public class ConceptRequestBuilder extends BaseRequestBuilder {
         return requestInfo;
     }
     /**
-     * Create a new concept
+     * Create a new concept as a child of `parentName`. If `parentName` is omitted the concept is created as the root, which fails with 400 if a root already exists. Returns 400 if the name already exists or the rank is invalid (see /concept/ranks). Requires an administrator or maintainer login. Maintainer changes are applied and recorded as pending history for an administrator to approve or reject.
      * @param body The request body
      * @return a {@link RequestInformation}
      */
@@ -209,7 +222,7 @@ public class ConceptRequestBuilder extends BaseRequestBuilder {
         return toPostRequestInformation(body, null);
     }
     /**
-     * Create a new concept
+     * Create a new concept as a child of `parentName`. If `parentName` is omitted the concept is created as the root, which fails with 400 if a root already exists. Returns 400 if the name already exists or the rank is invalid (see /concept/ranks). Requires an administrator or maintainer login. Maintainer changes are applied and recorded as pending history for an administrator to approve or reject.
      * @param body The request body
      * @param requestConfiguration Configuration for the request such as headers, query parameters, and middleware options.
      * @return a {@link RequestInformation}

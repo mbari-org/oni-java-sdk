@@ -317,6 +317,9 @@
           <verbose>false</verbose>
           <addSvnKeyWords>false</addSvnKeyWords>
           <licenseName>apache_v2</licenseName>
+          <excludes>
+            <exclude>**/kiota-lock.json</exclude>
+          </excludes>
         </configuration>
         <executions>
           <execution>
